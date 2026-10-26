@@ -1,0 +1,15 @@
+# Products whose Open Food Facts photo is wrong (different product, wrong size,
+# shelf price tag, unusable). One store product name per line, exactly as in the
+# catalog. They show the drawn package instead; other products sharing the same
+# photo are dropped too. Checked by eye on photo sheets 00-02.
+Vitamin Water 20 oz
+Pepsi 12 pk Cans
+Michelob Light 18 pk Cans
+Poland Spring 1 gal
+Poland Spring Water 1 L
+Dubai Chocolate Bar 1.24 oz
+Diet Coke 2 L
+Guinness 0 N/A Draught 4 pk
+Santitas White Corn 11 oz
+Ben & Jerry's's 4 oz
+Valued Naturals
