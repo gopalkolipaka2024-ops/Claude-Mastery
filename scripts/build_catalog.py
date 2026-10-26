@@ -396,7 +396,7 @@ FOOD_GUARD = rx([
     "ritz", "slim jim", "banshee bones", "hunky dor(?:y|ys)", "tayto", "biscuits?", "magnum (?:doub|dbl|double)",
     "double caramel", "gin gins", "condoms?", "aquaphor", "cascade", "rye bag", "stuffing", "creamer", "cold foam",
     "seasoning", "marinade", "glaze", "jelly", "gummies", "popcorn", "pretzels?", "tuna", "salmon",
-    "p\\.?f\\.? ?chang'?s", "orange chicken", "baking soda", "allegra", "stash", "bisto",
+    "p\\.?f\\.? ?chang'?s", "onion rings", "battered", "orange chicken", "baking soda", "allegra", "stash", "bisto",
 ])
 
 

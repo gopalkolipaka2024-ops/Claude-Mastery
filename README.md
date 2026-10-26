@@ -10,7 +10,22 @@ with a drawn package image.
 | `data/pos-export-raw.json` | Bottle POS export the catalog is built from. |
 | `scripts/build_catalog.py` | Cleans names, sorts products into departments and aisles, picks each product's package shape and colors. |
 | `scripts/build_site.py` | Wraps the page into `docs/` for web hosting. |
+| `scripts/match_photos.py` | Matches products to Open Food Facts entries (brand, flavor and drink type must agree). Writes `data/photo-matches-review.tsv` for spot checks. |
+| `scripts/fetch_photos.py` | Downloads a front-of-pack photo per match from the Open Food Facts image archive, skipping nutrition and ingredient panels. |
+| `scripts/build_photo_sheets.py` | Packs the photos into `photos/sheet-NN.webp` sprite sheets plus `photos/index.js`. |
 | `docs/` | Ready-to-host site (GitHub Pages: Settings → Pages → branch, folder `/docs`). |
+
+## Product photos
+
+2,282 products show a real photo from [Open Food Facts](https://world.openfoodfacts.org) (CC BY-SA,
+credited in the footer). The rest show a drawn package until a photo is added. To refresh photos,
+stream the Open Food Facts CSV export into a candidates file (see the docstring in `match_photos.py`), then:
+
+```sh
+python3 scripts/match_photos.py candidates.tsv
+python3 scripts/fetch_photos.py .photo-cache
+python3 scripts/build_photo_sheets.py .photo-cache
+```
 
 ## Rebuild
 
@@ -22,6 +37,7 @@ python3 scripts/build_site.py      # after editing src/store.html
 ## Still needed from the store
 
 - Prices: add to `PRICES` in `src/store.html`, or send the Bottle POS item export with prices.
-- Real photos (optional): set `PHOTOS["Product name"] = "photos/file.webp"`; drawn art is used otherwise.
+- Photos for the remaining products (mostly wine, spirits and local craft beer): set
+  `PHOTOS["Product name"] = "photos/file.webp"` in `src/store.html`.
 - Order email and the store's own DoorDash and Uber Eats links (`CONFIG`).
 - Deli: confirm the sandwich names and builder options match the real menu.

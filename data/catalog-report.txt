@@ -1,6 +1,6 @@
 7380 products kept, 563 dropped
 
-Grocery / Pantry: 1839
+Grocery / Pantry: 1840
 Wine / Red: 615
 Grocery / Candy and chocolate: 386
 Grocery / Snacks and chips: 379
@@ -10,8 +10,8 @@ Wine / White: 295
 Grocery / Dairy and eggs: 287
 Spirits / Whiskey and bourbon: 246
 Grocery / Ice cream and frozen: 209
-Beer / Craft and seasonal: 200
 Grocery / Bakery and sweets: 200
+Beer / Craft and seasonal: 199
 Soft drinks / Water, seltzer and ice: 183
 Spirits / Vodka: 142
 Spirits / Tequila and mezcal: 141
@@ -40,12 +40,12 @@ Wine / Sangria: 15
 Grocery / Deli sandwiches: 13
 
 Shapes:
-box: 2058
+box: 2059
 wine: 915
 spirit: 722
 pack: 570
 bag: 504
-can: 306
+can: 305
 bar: 282
 jar: 257
 pouch: 251

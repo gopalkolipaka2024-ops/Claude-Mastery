@@ -22,5 +22,7 @@ out = ROOT / "docs"
 out.mkdir(exist_ok=True)
 (out / "index.html").write_text(page)
 shutil.copy(ROOT / "catalog.js", out / "catalog.js")
+if (ROOT / "photos").exists():
+    shutil.copytree(ROOT / "photos", out / "photos", dirs_exist_ok=True)
 (out / ".nojekyll").write_text("")
 print("wrote", out / "index.html")
