@@ -1,0 +1,272 @@
+7380 products kept, 563 dropped
+
+Grocery / Pantry: 1839
+Wine / Red: 615
+Grocery / Candy and chocolate: 386
+Grocery / Snacks and chips: 379
+Grocery / Household and personal care: 376
+Beer / Seltzers, ciders and cocktails: 371
+Wine / White: 295
+Grocery / Dairy and eggs: 287
+Spirits / Whiskey and bourbon: 246
+Grocery / Ice cream and frozen: 209
+Beer / Craft and seasonal: 200
+Grocery / Bakery and sweets: 200
+Soft drinks / Water, seltzer and ice: 183
+Spirits / Vodka: 142
+Spirits / Tequila and mezcal: 141
+Beer / IPA and pale ale: 139
+Spirits / Liqueurs and cordials: 125
+Grocery / Meat and deli: 123
+Soft drinks / Soda: 115
+Wine / Sparkling: 112
+Soft drinks / Juice, tea and coffee: 103
+Beer / Imported: 91
+Soft drinks / Energy and sports: 91
+Spirits / Rum: 90
+Beer / Light beer: 70
+Wine / Rosé: 62
+Beer / Domestic lager: 61
+Grocery / Pet food and treats: 58
+Spirits / Brandy and cognac: 48
+Spirits / Gin: 41
+Soft drinks / Mixers: 39
+Grocery / Fresh produce: 36
+Beer / Non-alcoholic: 26
+Wine / Dessert and port: 22
+Spirits / Soju and sake: 16
+Beer / Stout and porter: 15
+Wine / Sangria: 15
+Grocery / Deli sandwiches: 13
+
+Shapes:
+box: 2058
+wine: 915
+spirit: 722
+pack: 570
+bag: 504
+can: 306
+bar: 282
+jar: 257
+pouch: 251
+pet: 230
+case: 209
+tin: 187
+tub: 138
+bcase: 107
+sparkle: 105
+boxwine: 86
+flask: 86
+carton: 82
+tallcan: 71
+jug: 61
+nip: 41
+fruit: 36
+roll: 29
+eggs: 19
+sandwich: 13
+cup: 9
+bottle: 5
+icebag: 1
+
+Dropped (first 200):
+Back Woods Sweet Pack
+The Quincy Sun
+Dr Paper Regular
+Simply Done Absorbent Paper 1 Roll
+Cuban Corona Rounds 5 pk
+Open Tax Grocery
+Bounty 2 Rolls Paper Towels
+The Patriot Ledger
+Simply Done Paper Towels 2 Rolls
+Satya Incense
+Skl
+Bounty Essentiels Paper Towel
+Bob Marley Cigarette Papers
+Dr Paper Diet 20 oz
+The Patriot Ledger Weekend
+Simply Done Paper Plates 45
+Sale Sale Sale
+Green Paper
+Mi Phone
+Simply Done Paper Plates 22
+Open Wine
+Sale Sale 2
+Punch Elite Maduro
+Zig-Zag Orange
+Space Glow 3%
+Back Woods Single
+Bounty 4=8 Paper Towels Rolls
+Open Beer
+Vip Royal Capsule
+Ashton Churchill
+Calidad Mejor Nic Churchill
+Simply Done Paper Plates 100 Count
+Reynolds Parchment Paper 45 Sq Ft
+Cuban Segundos Churchill 50
+Simply Done Paper Bowls 24 Count
+Trojan Condoms
+Monteceisto Classic Churchill
+Arturo Fuente Double Chateau Fuente
+Diiet Dr Paper 2 L
+Rom y Jul 1875 Churchill
+Punch Elite Ems
+Cut-Rite Wax Paper
+Mt.Olive Mild Banana Paper Ring 12 oz
+Simply Done Ultra Strong 18 Paper Towels Rolls
+Simply Done Paper Cups 54 Count 9 oz
+Open Liquor
+Trojan Magnum Condoms
+Cuban Churchill Rounds 3 pk
+Scott Paper Towels 6 Double Rolls
+Bounty 12=24 Paper Towels Rolls
+Simply Done Paper Plates 48
+Tissue Paper Sheets
+Bounty 6=15 Paper Towels Rolls
+Bounty 12 Paper Towels Rolls
+White Swan Paper Towel Roll
+Dr Mcgil Menthol Sleeve 50 ml
+Good Things Sea Salt N Paper 3.5 oz
+Chire Boy Ultimate 2 Scrubbers
+Pearl Milling Original Mix 32 oz
+Cadbury Cocoa
+Paws Happy Life
+Choco Vine Dutch Chocolate
+Alouette Creme de Brie 5 oz
+K.S.D Peach Makgeolli
+Super-Melt 10 lb
+Mr & Mrs Bold N Spicy Bloody Mary Mix
+Badia Black Sesame Seeds 2.5 oz
+Badia Ground Black Pepper
+Western Hickry Wood Chips
+Badia Ground Turmeric 8 oz
+Tasty Bite Tikk Masala
+Talkhouse Variety 8 Pack
+A&H Oxi Clean 5in1 Pwr Packs
+A2 Milk 2% 59 oz
+Kellogg's Special Chocolatey Delight
+Kelloggs Raisin Bran Crunch
+Downy Un Stopable Fresh Frais 20.1 oz
+Barilla Traditional
+Barilla Roasted Garlic
+Downy Soft 44 oz
+Clap Back Me Apple
+Bolt House Farms Premium Sweet Petites 12 oz
+Dove Fresh Deo 1.6 oz
+Roof Leak Repair 10.1 oz
+Boss Glove Pigskin Insull Lg
+Dramamine Nat Non Drowsy
+Kashi Go Lean Crunch 13.8 oz
+Mini Cucumbers 14 oz
+Kashi Organic Protein Fiber
+Kayem Red Franks
+Pastene Fusilli Lunghi 1 lb
+Charmin Ultra Strong Bathroom Tissue 9 Rolls
+Shake N Bake Crispy Buffalo 5 oz
+NE Vill Snake Mix
+Erin Hotcup Vegetable
+Avery Permanent Marker
+Finish Jet Dri Rinse Aid 8.4 oz
+Finagle Bagel Asiago 20 oz
+Avocado Bags
+Pasta Roni All Types 6 oz
+Chef Boyardee Lasagna 15 oz
+A2 Whole Milk 59 oz
+Santaverse Gingerbread House Kit
+Table Talk Old Fashioned Pecan Pie
+Sword Skewers
+Saxa Black Paper
+Murrys French Toast Sticks Dbl Cinnamon 14 oz
+Cabot Everything Bagel Cheddar Cheese 8 oz
+Scotch Utility Tape (30022)
+Jiffy Mix 9 oz
+Febreze Fabric 16.9 oz
+Nasoya Organic Tofu 14 oz
+Pastene Pasta Sauce Tomato Basil 24.3 oz
+Scallions
+Alessi Farro Butternut Squash & Kale
+Copperstone Sport Sunscreen 3 oz
+Pringles Minis 5.2 oz
+Cultured Buttermilk Blend 12 oz
+Black Satin Tire Coating 15 oz
+Mccormic Red Pepper Crushed 1.5 oz
+Mccormic Ground Nutmeg 1.1 oz
+Mccormic Celery Salt 4 oz
+Citrus Press
+Mccormick Cloves Whole 0.62 oz
+Mccormick Assorted Food Color 1 oz
+Ah-So Duck Sauce 10 oz
+Memo Oad Wire 6x4 (32232)
+Mccorm Onion Salt
+Pop & Bottle Golde Chai Tea Almond Latte
+Umbrella Mini
+Udis Gluten Free White Bread
+Banza Cheddar Elbows
+Made With Cherries 10 oz
+Mag1 Tire Inflator 12 oz
+Blue Diamond Nut Thins
+Post Berry Pebbles 10 oz
+Post Honey 14 oz
+Utility Duct Tape
+Luvs Size 2
+Two Bite Blueberry Scone
+Maya Kaimal Butter Masala
+Twizzlers Rainbow 12.4 oz
+Captain Marden's Sole Linden 16 oz
+Twinnings Chai Tea
+Campbell Cream of Celery Soup 10.5 oz
+Relex Pink
+Betty Crockers Au Gratin 4.7 oz
+Cohiba Penquenos Red Dot Tin 6
+Remedy Organic Blue 8 g Protein 12 oz
+Reser's Creamed Spinach 12 oz
+Tide Pods 3 In 1 Bag
+Kikkoman Soy Sauce 5 oz
+Dove Dark Choc & Mint 6.74 oz
+Kinder Bueno Dessert
+King Arthur Gluten Free Muffin Mix 1 lb
+Cadbury Eclairs 110 G
+Reynolds Oven Bags 5 ct
+Badia Seasoning Italian 1.25 oz
+Betty Crocker Birthday Candles
+Betty Crocker Angle Food Cake Mix 16 oz
+Bag Balm Skin Mosturizer
+King Arthur Gluten Free Classic Yellow Cake Mix 1 lb
+Trix Cereal 16.1 oz
+Bakers Chocolate 4 oz
+Tozai Living Jewel
+Deep Butter Chicken 9 oz
+Pineland Reserve Chdr Bar
+Delallo Org Hot Honey 7.7 oz
+Lactaid Fast Act
+Vina Borgia
+Delmonte Zucchini Italian Style Tomato Sauce 14.5 oz
+Raincoast Crisps Rosemary Raisin Pecan
+Raincoast Crisps Salty Dates & Almonds
+Delmonte Pickled Beets 16 oz
+Caladryl Lotion 6 oz
+Cadia Pomogranate 10 oz
+Tootsie Roll 7.3 oz
+Mi-Del Ginger Snap
+Hood 2% Qt
+Handcrafted Giant Chocolate Frozen Banana 4.4 oz
+Hood 1% Qt
+Olli Chipotle Smoky Salami
+Boursin Shallot & Chive
+Hood Whipped Cream
+Froot Loops Cereal 10.1 oz
+Wonder Enriched Bread 20 oz
+Spice Classics Chopped Onion 1.75 oz
+Briannas Real French Vngrt
+Snyder's Cheddar Cheese 8 oz
+Suave Essentials
+Fresh Energy Pitted Dates
+Cento Flat Fillet In Olive Oil 2 oz
+Friendly's Fudgealicious Fudge Bars
+Sp Lobster Better Than Bouillon 8 oz
+Odlums Irish Framhouse Bread 15.9 oz
+Great Value Crunchy Honey Oats Cereal 23 oz
+Nurse Shark Jalapeno Sauce 5 oz
+Cascade Complete 3.75 lb
+P.F.Chang's Chicken Pad Thai 11 oz
+Pac-Rim Swt Rsling
