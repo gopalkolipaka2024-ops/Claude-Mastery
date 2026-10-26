@@ -6,6 +6,9 @@ and packed 8x8 to a sheet (photos/sheet-NN.webp), most popular products first
 so the top of the store loads only a few sheets. photos/index.js maps each
 product name to its sheet and cell.
 
+Official photos in official-photos/ (from scripts/kroger_photos.py) are used
+first; Open Food Facts photos fill in where there is no official one.
+
 Run:  python3 scripts/build_photo_sheets.py [cache_dir]
 """
 import json
@@ -44,7 +47,18 @@ def main():
     txt = (ROOT / "catalog.js").read_text()
     order = [r[0] for r in json.loads(txt[txt.index("{"):txt.rindex("}") + 1])["items"]]
     sources = json.loads((ROOT / "data" / "photo-sources.json").read_text())
-    names = [n for n in order if n in sources and (CACHE / f"{sources[n]['code']}.jpg").exists()]
+    files = {}
+    official = ROOT / "official-photos" / "found.csv"
+    if official.exists():
+        import csv
+        for r in csv.DictReader(open(official)):
+            path = ROOT / "official-photos" / r["file"]
+            if path.exists():
+                files[r["name"]] = ("k" + r["kroger_id"], path)
+    for n, src in sources.items():
+        if n not in files and src.get("front_score", 0) >= 2 and (CACHE / f"{src['code']}.jpg").exists():
+            files[n] = (src["code"], CACHE / f"{src['code']}.jpg")
+    names = [n for n in order if n in files]
     OUT.mkdir(exist_ok=True)
     for old in OUT.glob("sheet-*.webp"):
         old.unlink()
@@ -52,12 +66,12 @@ def main():
     cells_by_code = {}
     sheet, slot, canvas = 0, 0, None
     for name in names:
-        code = sources[name]["code"]
+        code, path = files[name]
         if code in cells_by_code:
             index[name] = cells_by_code[code]
             continue
         try:
-            img = cell(CACHE / f"{code}.jpg")
+            img = cell(path)
         except Exception as e:  # noqa: BLE001
             print("skip", name, e)
             continue
