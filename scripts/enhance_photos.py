@@ -3,10 +3,12 @@
 
 For each <cache>/<barcode>.jpg the script:
   1. cuts the product out of its background with rembg (open-source, MIT),
-  2. checks the cut-out looks sane (falls back to a plain border trim if not),
+  2. fills holes in the cut-out, drops stray specks, and checks it still looks
+     like one solid package (falls back to a plain border trim if not, so a
+     bag whose printed food got cut out instead of the bag keeps its photo),
   3. centers it on pure white with even padding, lifts contrast slightly
      and sharpens it,
-  4. writes <cache>/clean/<barcode>.jpg (900px tall, 4:5 like the store's cards).
+  4. writes <cache>/clean-v2/<barcode>.jpg (900px tall, 4:5 like the store's cards).
 
 Already-processed photos are skipped, so later runs only handle new ones.
 The edited photos are adaptations of CC BY-SA images and stay CC BY-SA.
@@ -16,13 +18,16 @@ Run:  python3 scripts/enhance_photos.py [cache_dir]
 import sys
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageChops, ImageEnhance, ImageFilter, ImageOps
+from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / ".photo-cache")
-OUT = CACHE / "clean"
+OUT = CACHE / "clean-v2"   # bump the name to re-process every photo
 W, H = 720, 900          # 4:5, matches the 240x300 cards at 3x
 PAD = 0.07               # white margin around the product
+MIN_FILL = 0.6           # share of the cut-out's box that must be solid product
 MODEL = "isnet-general-use"
 
 
@@ -35,23 +40,40 @@ def plain_trim(im):
     return im
 
 
+def clean_mask(alpha):
+    """Fill holes, keep the main object (and anything close to its size), drop specks."""
+    solid = np.asarray(alpha) > 128
+    solid = ndimage.binary_fill_holes(solid)
+    labels, n = ndimage.label(solid)
+    if n == 0:
+        return None
+    sizes = ndimage.sum(solid, labels, range(1, n + 1))
+    keep = [i + 1 for i, v in enumerate(sizes) if v >= 0.15 * sizes.max()]
+    return np.isin(labels, keep)
+
+
 def cut_out(im, session):
     """Return the product on white, or None if the cut-out looks wrong."""
     from rembg import remove
     rgba = remove(im, session=session, post_process_mask=True)
-    alpha = rgba.getchannel("A")
-    box = alpha.point(lambda v: 255 if v > 40 else 0).getbbox()
-    if not box:
+    mask = clean_mask(rgba.getchannel("A"))
+    if mask is None or not mask.any():
         return None
-    hist = alpha.histogram()
-    solid = sum(hist[128:]) / (im.width * im.height)
-    bw, bh = box[2] - box[0], box[3] - box[1]
-    # a real package fills a decent share of the photo and isn't a sliver
-    if solid < 0.08 or solid > 0.97 or bw < 0.15 * im.width or bh < 0.15 * im.height:
+    ys, xs = np.nonzero(mask)
+    x0, x1, y0, y1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
+    bw, bh = x1 - x0, y1 - y0
+    share = mask.sum() / mask.size
+    fill = mask[y0:y1, x0:x1].mean()
+    # a real package is one solid shape that fills a decent share of the photo
+    if share < 0.08 or share > 0.97 or fill < MIN_FILL or bw < 0.15 * im.width or bh < 0.15 * im.height:
         return None
-    rgba = rgba.crop(box)
-    white = Image.new("RGB", rgba.size, "white")
-    white.paste(rgba, mask=rgba.getchannel("A"))
+    # soften the edge slightly, keep rembg's own soft alpha where it agrees
+    alpha = np.minimum(np.asarray(rgba.getchannel("A")), np.where(mask, 255, 0)).astype("uint8")
+    alpha = Image.fromarray(np.maximum(alpha, np.where(ndimage.binary_erosion(mask, iterations=2), 255, 0).astype("uint8")))
+    box = (int(x0), int(y0), int(x1), int(y1))
+    rgb, alpha = im.crop(box), alpha.crop(box)  # original pixels, so filled holes keep their color
+    white = Image.new("RGB", rgb.size, "white")
+    white.paste(rgb, mask=alpha)
     return white
 
 

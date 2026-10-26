@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Pack product photos into sprite sheets the page can show.
 
-Uses the cleaned photos from scripts/enhance_photos.py (<cache>/clean/) when
+Uses the cleaned photos from scripts/enhance_photos.py (<cache>/clean-v2/) when
 present, otherwise trims the raw photo. Each goes into a 360x450 cell (1.5x the
 240x300 cards, so they stay sharp on phones) and is packed 8x8 to a sheet
 (photos/sheet-NN.webp), most popular products first so the top of the store
 loads only a few sheets. photos/index.js maps each product name to its sheet and cell.
+
+Products listed in data/photo-exclude.txt (photo shows the wrong product, a shelf
+price tag, etc.) get no photo, so the store shows its drawn package instead. Any
+other product that uses the same photo is dropped too.
 
 Run:  python3 scripts/build_photo_sheets.py [cache_dir]
 """
@@ -20,6 +24,7 @@ CACHE = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / ".photo-cache")
 OUT = ROOT / "photos"
 CW, CH, COLS, ROWS = 360, 450, 8, 8
 PAD = 14
+CLEAN = "clean-v2"
 
 
 def trim(im):
@@ -34,7 +39,7 @@ def trim(im):
 
 def cell(path):
     im = ImageOps.exif_transpose(Image.open(path)).convert("RGB")
-    if path.parent.name == "clean":  # already cut out and padded
+    if path.parent.name == CLEAN:  # already cut out and padded
         return im.resize((CW, CH), Image.LANCZOS)
     im = trim(im)
     im.thumbnail((CW - 2 * PAD, CH - 2 * PAD), Image.LANCZOS)
@@ -48,8 +53,17 @@ def main():
     order = [r[0] for r in json.loads(txt[txt.index("{"):txt.rindex("}") + 1])["items"]]
     sources = json.loads((ROOT / "data" / "photo-sources.json").read_text())
     files = {}
+    excl_file = ROOT / "data" / "photo-exclude.txt"
+    excl_names = [l.strip() for l in excl_file.read_text().splitlines()
+                  if l.strip() and not l.startswith("#")] if excl_file.exists() else []
+    bad_codes = {sources[n]["code"] for n in excl_names if n in sources}
+    missing = [n for n in excl_names if n not in sources]
+    if missing:
+        print("photo-exclude.txt names not found:", missing)
     for n, src in sources.items():
-        clean, raw = CACHE / "clean" / f"{src['code']}.jpg", CACHE / f"{src['code']}.jpg"
+        if src["code"] in bad_codes:
+            continue
+        clean, raw = CACHE / CLEAN / f"{src['code']}.jpg", CACHE / f"{src['code']}.jpg"
         if src.get("front_score", 0) >= 2 and (clean.exists() or raw.exists()):
             files[n] = (src["code"], clean if clean.exists() else raw)
     names = [n for n in order if n in files]
