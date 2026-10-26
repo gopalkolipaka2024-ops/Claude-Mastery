@@ -8,17 +8,20 @@ read the text recognition saved next to each photo and skip nutrition panels
 and ingredient lists, keeping the photo that looks like the front.
 
 Input:  data/photo-matches.json (from match_photos.py)
-Output: <cache>/<barcode>.jpg (400px originals) and data/photo-sources.json
+Output: <cache>/<barcode>.jpg (full-resolution originals) and data/photo-sources.json
 
 Run:  python3 scripts/fetch_photos.py [cache_dir]
 """
 import gzip
+import io
 import json
 import re
 import sys
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
+from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / ".photo-cache")
@@ -87,7 +90,9 @@ def work(item):
     key = m["code"]
     out, meta = CACHE / f"{key}.jpg", CACHE / f"{key}.json"
     if out.exists() and meta.exists():
-        return name, json.loads(meta.read_text())
+        info = json.loads(meta.read_text())
+        if "full" in info:
+            return name, info
     best = None
     try:
         for code in [m["code"]] + m.get("alts", []):
@@ -98,8 +103,18 @@ def work(item):
                 break
         if not best:
             return name, None
-        out.write_bytes(get(best[0], binary=True))
-        info = {"code": key, "photo_code": best[2], "url": best[0], "front_score": best[1]}
+        # the full-size upload, not the 400px thumbnail; fall back to the thumbnail
+        url = best[0]
+        try:
+            data = get(url.replace(".400.jpg", ".jpg"), binary=True)
+            url = url.replace(".400.jpg", ".jpg")
+        except Exception:  # noqa: BLE001
+            data = get(url, binary=True)
+        im = ImageOps.exif_transpose(Image.open(io.BytesIO(data))).convert("RGB")
+        im.thumbnail((1600, 1600), Image.LANCZOS)  # plenty for cleanup, keeps the cache small
+        im.save(out, "JPEG", quality=92)
+        (CACHE / "clean" / f"{key}.jpg").unlink(missing_ok=True)  # re-clean the new photo
+        info = {"code": key, "photo_code": best[2], "url": url, "front_score": best[1], "full": True}
         meta.write_text(json.dumps(info))
         return name, info
     except Exception as e:  # noqa: BLE001
