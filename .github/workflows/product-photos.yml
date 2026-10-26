@@ -1,0 +1,48 @@
+name: Product photos
+
+# Runs free on GitHub's servers. Gets official product photos through the Kroger
+# Developer API, fills gaps from Open Food Facts, rebuilds the photo sheets and the
+# site in docs/, and commits the result. Runs daily until every product is covered
+# (the API allows about 10,000 lookups a day). Start it any time from the Actions tab.
+#
+# Setup: create a free app at https://developer.kroger.com (Products API), then add
+# repository secrets KROGER_CLIENT_ID and KROGER_CLIENT_SECRET
+# (Settings > Secrets and variables > Actions).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 7 * * *"
+
+permissions:
+  contents: write
+
+concurrency: product-photos
+
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pillow
+      - name: Official photos (Kroger API)
+        env:
+          KROGER_CLIENT_ID: ${{ secrets.KROGER_CLIENT_ID }}
+          KROGER_CLIENT_SECRET: ${{ secrets.KROGER_CLIENT_SECRET }}
+        run: python3 scripts/kroger_api_photos.py --search-all --limit-calls 9000
+      - name: Open Food Facts photos where there is no official one
+        run: python3 scripts/fetch_photos.py .photo-cache
+      - name: Rebuild photo sheets and site
+        run: |
+          python3 scripts/build_photo_sheets.py .photo-cache
+          python3 scripts/build_site.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
+          git add official-photos photos docs data/photo-sources.json
+          git commit -m "Update product photos" || echo "No changes to commit"
+          git push

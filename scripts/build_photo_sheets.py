@@ -6,7 +6,7 @@ and packed 8x8 to a sheet (photos/sheet-NN.webp), most popular products first
 so the top of the store loads only a few sheets. photos/index.js maps each
 product name to its sheet and cell.
 
-Official photos in official-photos/ (from scripts/kroger_photos.py) are used
+Official photos in official-photos/ (from scripts/kroger_api_photos.py) are used
 first; Open Food Facts photos fill in where there is no official one.
 
 Run:  python3 scripts/build_photo_sheets.py [cache_dir]

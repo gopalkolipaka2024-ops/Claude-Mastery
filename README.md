@@ -27,6 +27,15 @@ python3 scripts/fetch_photos.py .photo-cache
 python3 scripts/build_photo_sheets.py .photo-cache
 ```
 
+### Official photos (free, runs in the cloud)
+
+`.github/workflows/product-photos.yml` runs daily on GitHub Actions. It fetches official
+front-of-pack photos through the free Kroger Developer API (`scripts/kroger_api_photos.py`),
+fills gaps from Open Food Facts, rebuilds `photos/` and `docs/`, and commits them. Setup:
+create an app at https://developer.kroger.com with the Products API, then add repository
+secrets `KROGER_CLIENT_ID` and `KROGER_CLIENT_SECRET`. Official photos replace Open Food
+Facts ones automatically.
+
 ## Rebuild
 
 ```sh
