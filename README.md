@@ -12,6 +12,7 @@ with a drawn package image.
 | `scripts/build_site.py` | Wraps the page into `docs/` for web hosting. |
 | `scripts/match_photos.py` | Matches products to Open Food Facts entries (brand, flavor and drink type must agree). Writes `data/photo-matches-review.tsv` for spot checks. |
 | `scripts/fetch_photos.py` | Downloads a front-of-pack photo per match from the Open Food Facts image archive, skipping nutrition and ingredient panels. |
+| `scripts/enhance_photos.py` | Cuts each photo out of its background and centers it on white. |
 | `scripts/build_photo_sheets.py` | Packs the photos into `photos/sheet-NN.webp` sprite sheets plus `photos/index.js`. |
 | `docs/` | Ready-to-host site (GitHub Pages: Settings → Pages → branch, folder `/docs`). |
 
@@ -24,17 +25,21 @@ stream the Open Food Facts CSV export into a candidates file (see the docstring 
 ```sh
 python3 scripts/match_photos.py candidates.tsv
 python3 scripts/fetch_photos.py .photo-cache
+python3 scripts/enhance_photos.py .photo-cache
 python3 scripts/build_photo_sheets.py .photo-cache
 ```
 
-### Official photos (free, runs in the cloud)
+### Automatic cleanup (free, runs in the cloud)
 
-`.github/workflows/product-photos.yml` runs daily on GitHub Actions. It fetches official
-front-of-pack photos through the free Kroger Developer API (`scripts/kroger_api_photos.py`),
-fills gaps from Open Food Facts, rebuilds `photos/` and `docs/`, and commits them. Setup:
-create an app at https://developer.kroger.com with the Products API, then add repository
-secrets `KROGER_CLIENT_ID` and `KROGER_CLIENT_SECRET`. Official photos replace Open Food
-Facts ones automatically.
+`.github/workflows/product-photos.yml` runs weekly on GitHub Actions (or on demand from the
+Actions tab). It downloads each matched product's full-size photo from Open Food Facts,
+removes the background with the open-source [rembg](https://github.com/danielgatis/rembg)
+model (`scripts/enhance_photos.py`), centers the product on white like a delivery-app listing,
+rebuilds `photos/` and `docs/`, and commits them. No API keys needed. The cleaned photos are
+adaptations of CC BY-SA images, so they stay CC BY-SA and the footer credit must stay.
+
+Kroger API photos were dropped: Kroger's terms (§5e) don't allow storing or publicly
+displaying API content outside a live app.
 
 ## Rebuild
 
