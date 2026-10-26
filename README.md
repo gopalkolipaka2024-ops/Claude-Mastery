@@ -12,7 +12,8 @@ with a drawn package image.
 | `scripts/build_site.py` | Wraps the page into `docs/` for web hosting. |
 | `scripts/match_photos.py` | Matches products to Open Food Facts entries (brand, flavor and drink type must agree). Writes `data/photo-matches-review.tsv` for spot checks. |
 | `scripts/fetch_photos.py` | Downloads a front-of-pack photo per match from the Open Food Facts image archive, skipping nutrition and ingredient panels. |
-| `scripts/enhance_photos.py` | Cuts each photo out of its background and centers it on white. |
+| `scripts/enhance_photos.py` | Cuts each photo out of its background and centers it on white; keeps the plain photo when the cut-out goes wrong. |
+| `data/photo-exclude.txt` | Products whose photo is wrong. Add a name to show the drawn package instead. |
 | `scripts/build_photo_sheets.py` | Packs the photos into `photos/sheet-NN.webp` sprite sheets plus `photos/index.js`. |
 | `docs/` | Ready-to-host site (GitHub Pages: Settings → Pages → branch, folder `/docs`). |
 
