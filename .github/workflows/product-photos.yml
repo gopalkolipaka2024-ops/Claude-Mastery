@@ -1,17 +1,15 @@
 name: Product photos
 
-# Runs free on GitHub's servers. Gets official product photos through the Kroger
-# Developer API, fills gaps from Open Food Facts, rebuilds the photo sheets and the
-# site in docs/, and commits the result. Runs daily until every product is covered
-# (the API allows about 10,000 lookups a day). Start it any time from the Actions tab.
-#
-# Setup: create a free app at https://developer.kroger.com (Products API), then add
-# repository secrets KROGER_CLIENT_ID and KROGER_CLIENT_SECRET
-# (Settings > Secrets and variables > Actions).
+# Runs free on GitHub's servers, so no photos are downloaded to your own computer.
+# Gets each product's full-size front-of-pack photo from Open Food Facts (CC BY-SA),
+# removes the background with the open-source rembg model, centers it on white like
+# a delivery-app listing, rebuilds the photo sheets and the site in docs/, and commits
+# the result. Cleaned photos are cached between runs, so later runs only process new
+# products. Runs weekly; start it any time from the Actions tab.
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 7 * * *"
+    - cron: "17 7 * * 1"
 
 permissions:
   contents: write
@@ -21,20 +19,35 @@ concurrency: product-photos
 jobs:
   photos:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pillow
-      - name: Official photos (Kroger API)
-        env:
-          KROGER_CLIENT_ID: ${{ secrets.KROGER_CLIENT_ID }}
-          KROGER_CLIENT_SECRET: ${{ secrets.KROGER_CLIENT_SECRET }}
-        run: python3 scripts/kroger_api_photos.py --search-all --limit-calls 9000
-      - name: Open Food Facts photos where there is no official one
+      - run: pip install pillow "rembg[cpu]==2.0.86"
+      - name: Restore photo cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .photo-cache
+            ~/.u2net
+            ~/.rembg
+          key: photos-${{ github.run_id }}
+          restore-keys: photos-
+      - name: Full-size photos from Open Food Facts
         run: python3 scripts/fetch_photos.py .photo-cache
+      - name: Remove backgrounds and center on white
+        run: python3 scripts/enhance_photos.py .photo-cache
+      - name: Save photo cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .photo-cache
+            ~/.u2net
+            ~/.rembg
+          key: photos-${{ github.run_id }}
       - name: Rebuild photo sheets and site
         run: |
           python3 scripts/build_photo_sheets.py .photo-cache
@@ -43,6 +56,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
-          git add official-photos photos docs data/photo-sources.json
+          git add photos docs data/photo-sources.json
           git commit -m "Update product photos" || echo "No changes to commit"
           git push
