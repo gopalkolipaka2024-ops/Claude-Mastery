@@ -1,7 +1,8 @@
 # Adams Shore web (Next.js)
 
 Browse-only store site. Architecture: [`../adr/0001-architecture.md`](../adr/0001-architecture.md).
-Status: **Phase 2 (pages and UX) done.** Phase 3 adds the database, live price/stock sync, admin and email.
+Status: **Phase 3 (backend) done.** Database, POS sync and webhook, public API, admin and contact email.
+Backend setup and operations: [`docs/backend.md`](docs/backend.md). Environment variables: [`.env.example`](.env.example).
 
 ## Commands
 
@@ -13,6 +14,8 @@ Status: **Phase 2 (pages and UX) done.** Phase 3 adds the database, live price/s
 | `npm run tokens:check` | Checks every text/background token pair against WCAG 2.2 AA |
 | `npm run storybook` | Component library at http://localhost:6006 |
 | `npm run build-storybook && npm run test:a11y` | Builds Storybook and runs axe on every story (fails on any violation or broken story) |
+| `npm run db:start` / `npm run db:migrate` / `npm run sync` | Local Postgres, apply migrations, full catalog sync (see docs/backend.md) |
+| `npm test` | Unit and integration tests (set `TEST_DATABASE_ADMIN_URL` for the sync tests) |
 | `npm run catalog:import` | Rebuilds `src/data/catalog.json` from `../catalog.js` (the cleaned Bottle POS export) |
 | `npm run build && npm start`, then `npm run test:pages` | Browser checks of every page type on desktop and phone: axe, age gate, filters + Back, load more, autocomplete |
 
@@ -30,10 +33,10 @@ Status: **Phase 2 (pages and UX) done.** Phase 3 adds the database, live price/s
 
 ## Data rules
 
-The store's export has no prices, stock, brands, images or descriptions. Pages show only what exists:
+Pages show only what the store's data has. With today's export (no prices, stock, brands or images) that means
 "Call for price", no stock badge, no price/brand/country filters, and a drawn package instead of a photo.
-They appear automatically once Phase 3 supplies the data. Site content (deals, announcements,
-featured products) is in `src/content/site.json` and starts empty.
+Each appears automatically once the POS sync supplies it. Content (deals, announcements, featured, hours)
+is edited in `/admin`; without a database it falls back to `src/content/site.json` and `src/config/store.ts`.
 
 ## Where things live
 

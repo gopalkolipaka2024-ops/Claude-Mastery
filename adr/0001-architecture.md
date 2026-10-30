@@ -1,6 +1,6 @@
 # ADR 0001: Architecture for the Adams Shore browse-only store site
 
-Status: **Proposed, waiting for approval**
+Status: **Accepted** (Phase 0 approved; amended during Phase 3, see section 5)
 Date: 2026-10-30
 
 ## 1. What exists today (audit)
@@ -81,3 +81,10 @@ Free tiers have limits and can change; each is re-checked before launch.
 8. Deli: should the deli board stay (browse-only, "call to order")? If so, the real sandwich names and ingredients.
 9. Browse-only means removing the current cart and text-message pickup ordering. Confirm.
 10. Product photos: which source will you pursue (distributor/brand portals, Bottle POS, own photos)?
+
+## 5. Amendments made while building (Phase 3)
+
+- **Admin login: Cloudflare Access instead of Auth.js magic links.** Free for up to 50 users, Cloudflare runs the sign-in (email one-time codes), so the site stores no passwords or sessions. The site verifies Access's signed JWT and an email allow-list on every admin request.
+- **Caching: in-memory catalog snapshot + path revalidation instead of per-query cache tags.** At ~7,400 products, one snapshot per server process (reloaded when the database's catalog version changes, checked every 2 seconds) is simpler and faster than caching individual queries. Changes re-render the affected product pages and the home page immediately.
+- **Drivers:** reads from Neon use the HTTP driver; writes use node-postgres for transactions. Local development and tests use real Postgres via `embedded-postgres` (no Docker).
+- **Variants:** one variant per product today (each POS item is its own product); the table allows grouping sizes later without a migration.
