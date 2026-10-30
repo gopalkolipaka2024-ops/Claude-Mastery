@@ -1,0 +1,147 @@
+/*
+  Adams Shore design tokens.
+  One source of truth: Tailwind utilities (bg-brand-700, text-muted, rounded-lg, shadow-md,
+  duration-base, ...) are generated from this @theme block, and components use the semantic
+  aliases (--color-surface, --color-text, ...) rather than raw palette steps.
+  Spacing is Tailwind's 4px base (p-2 = 8px), so every gap lands on the 4/8 grid.
+  Contrast of every text/background pair is checked by scripts/check-contrast.mjs.
+*/
+@theme {
+  /* Brand: harbor navy, the store's primary color */
+  --color-brand-50: #eef2f9;
+  --color-brand-100: #d9e1f1;
+  --color-brand-200: #b3c3e2;
+  --color-brand-300: #7f9ac9;
+  --color-brand-400: #4f70ae;
+  --color-brand-500: #2d4f92;
+  --color-brand-600: #1f3d78;
+  --color-brand-700: #14295a;
+  --color-brand-800: #0f2048;
+  --color-brand-900: #0b1734;
+
+  /* Accent: buoy red, for sale prices, the age gate and the brand stripe */
+  --color-accent-50: #fdecef;
+  --color-accent-100: #fad0d7;
+  --color-accent-500: #e03550;
+  --color-accent-600: #c8102e;
+  --color-accent-700: #a10c25;
+  --color-accent-800: #7d0a1d;
+
+  /* Neutrals: grey with a slight navy bias */
+  --color-neutral-0: #ffffff;
+  --color-neutral-25: #f9fafc;
+  --color-neutral-50: #f3f5f9;
+  --color-neutral-100: #e8ecf2;
+  --color-neutral-200: #d5dce7;
+  --color-neutral-300: #b7c1d1;
+  --color-neutral-400: #8c98ad;
+  --color-neutral-500: #657189;
+  --color-neutral-600: #4d586e;
+  --color-neutral-700: #384257;
+  --color-neutral-800: #242c3d;
+  --color-neutral-900: #131a28;
+
+  /* Semantic: status colors, separate from the brand accent */
+  --color-success-50: #e7f5ee;
+  --color-success-600: #1b7a4c;
+  --color-success-700: #156140;
+  --color-warning-50: #fff5db;
+  --color-warning-600: #8a5300;
+  --color-warning-700: #6e4200;
+  --color-danger-50: #fdecec;
+  --color-danger-600: #b42318;
+  --color-danger-700: #912018;
+  --color-info-50: #eaf2fc;
+  --color-info-600: #1d5fb0;
+  --color-info-700: #174c8d;
+
+  /* Semantic aliases used by components */
+  --color-bg: var(--color-neutral-25);
+  --color-surface: var(--color-neutral-0);
+  --color-surface-sunken: var(--color-neutral-50);
+  --color-text: var(--color-neutral-900);
+  --color-text-muted: var(--color-neutral-600);
+  --color-text-subtle: var(--color-neutral-500);
+  --color-border: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-300);
+  --color-border-input: var(--color-neutral-500); /* form controls need 3:1 against white */
+  --color-primary: var(--color-brand-700);
+  --color-primary-hover: var(--color-brand-600);
+  --color-primary-active: var(--color-brand-800);
+  --color-on-primary: var(--color-neutral-0);
+  --color-focus: var(--color-info-600);
+
+  /* Type: two families, self-hosted (see src/app/fonts.ts) */
+  --font-display: var(--font-display-face), "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-sans-face), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Type scale (rem, 16px root): 12 14 16 18 20 24 30 36 48 60 */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgb(19 26 40 / 0.08);
+  --shadow-md: 0 2px 4px rgb(19 26 40 / 0.06), 0 8px 20px -6px rgb(19 26 40 / 0.16);
+  --shadow-lg: 0 12px 32px -8px rgb(19 26 40 / 0.28);
+
+  /* Motion: short and functional */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1.2);
+  --animate-fade-in: fade-in 200ms var(--ease-standard) both;
+  --animate-slide-up: slide-up 320ms var(--ease-standard) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+  }
+  @keyframes slide-up {
+    from { transform: translateY(16px); opacity: 0; }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+}
+
+:root {
+  /* Durations, used as duration-(--duration-base) */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+
+  /* Layering, used as z-(--z-modal) */
+  --z-base: 0;
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-overlay: 40;
+  --z-drawer: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+
+  /* Minimum touch target (WCAG 2.5.8 asks 24px; we use 44px) */
+  --tap-min: 44px;
+}

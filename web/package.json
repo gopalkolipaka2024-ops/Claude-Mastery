@@ -1,0 +1,38 @@
+{
+  "name": "adams-shore-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "tokens:check": "node scripts/check-contrast.mjs",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook-static",
+    "test:a11y": "node scripts/a11y-stories.mjs storybook-static"
+  },
+  "dependencies": {
+    "@fontsource-variable/public-sans": "5.3.0",
+    "@fontsource/big-shoulders-display": "5.3.0",
+    "clsx": "2.1.1",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "10.6.2",
+    "@storybook/addon-docs": "10.6.2",
+    "@storybook/nextjs-vite": "10.6.2",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "axe-core": "4.14.0",
+    "storybook": "10.6.2",
+    "storybook-addon-pseudo-states": "10.6.2",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3"
+  }
+}
