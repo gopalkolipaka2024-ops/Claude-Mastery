@@ -5,6 +5,7 @@ import { Button } from "@/components/Button";
 import { sendContact, type ContactState } from "./actions";
 
 const field = "h-11 w-full rounded-md border bg-surface px-3 text-text";
+const LABELS = { name: "Name", email: "Email", message: "Message", captcha: "Robot check" } as const;
 
 export function ContactForm({ phone, turnstileKey }: { phone: { display: string; e164: string }; turnstileKey?: string | null }) {
   const [state, action, pending] = useActionState<ContactState, FormData>(sendContact, { status: "idle" });
@@ -15,7 +16,16 @@ export function ContactForm({ phone, turnstileKey }: { phone: { display: string;
   return (
     <form action={action} noValidate className="flex flex-col gap-4">
       <div ref={summary} tabIndex={-1} aria-live="polite" className="outline-none">
-        {state.status === "invalid" && <p className="rounded-md bg-danger-50 p-3 text-danger-700">Please fix {Object.keys(err).length === 1 ? "the field" : "the fields"} below.</p>}
+        {state.status === "invalid" && (
+          <div className="rounded-md bg-danger-50 p-3 text-danger-700">
+            <p className="font-semibold">Please fix {Object.keys(err).length === 1 ? "this" : `these ${Object.keys(err).length} things`}:</p>
+            <ul className="mt-1 list-disc pl-5">
+              {(Object.keys(err) as (keyof typeof LABELS)[]).map((k) => (
+                <li key={k}><a href={`#${k}`} className="inline-flex min-h-11 items-center underline">{LABELS[k]}: {err[k]}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
         {state.status === "sent" && <p className="rounded-md bg-success-50 p-3 text-success-700">Thanks. Your message was sent.</p>}
         {state.status === "failed" && (
           <p role="alert" className="rounded-md bg-danger-50 p-3 text-danger-700">
@@ -28,6 +38,7 @@ export function ContactForm({ phone, turnstileKey }: { phone: { display: string;
           </p>
         )}
       </div>
+      <p className="text-sm text-text-muted">All fields are required.</p>
       {[
         { id: "name", label: "Name", type: "text", auto: "name" },
         { id: "email", label: "Email", type: "email", auto: "email" },
@@ -51,7 +62,7 @@ export function ContactForm({ phone, turnstileKey }: { phone: { display: string;
         <div className="flex flex-col gap-1">
           {/* Cloudflare Turnstile: usually invisible; loads only when the form is configured to send. */}
           <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
-          <div className="cf-turnstile" data-sitekey={turnstileKey} data-theme="light" />
+          <div id="captcha" tabIndex={-1} className="cf-turnstile" data-sitekey={turnstileKey} data-theme="light" />
           {err.captcha && <p className="text-sm text-danger-600">{err.captcha}</p>}
         </div>
       )}
