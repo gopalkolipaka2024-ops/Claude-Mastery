@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { LegalPage } from "@/components/LegalPage";
 import { store } from "@/config/store";
-export const metadata: Metadata = { title: "Privacy policy" };
+export const metadata: Metadata = pageMeta({ title: "Privacy policy", path: "/privacy", description: `What information the ${store.name} website collects, why, and how to reach us about it.` });
 export default function Page() {
   return (
     <LegalPage title="Privacy policy">

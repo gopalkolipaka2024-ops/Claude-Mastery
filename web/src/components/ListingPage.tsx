@@ -29,7 +29,7 @@ export function ListingPage({ title, crumbs, path, products, searchParams, aisle
   const remaining = total - shown.length;
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
-      <Breadcrumbs items={crumbs} />
+      <Breadcrumbs items={crumbs} here={path} />
       <div className="mt-3 flex flex-col gap-1">
         <h1 className="text-4xl text-primary sm:text-5xl">{title}</h1>
         {intro}

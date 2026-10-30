@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HeroBanner } from "@/components/Banner";
 import { artUrl } from "@/lib/art-url";
@@ -9,6 +10,14 @@ import { Icon } from "@/components/Icon";
 import { getCatalog } from "@/lib/catalog";
 import { activeDeals, featuredSlugs, hours } from "@/lib/content";
 import { directionsUrl, store } from "@/config/store";
+import { pageMeta } from "@/lib/seo";
+import { storeLd } from "@/lib/structured-data";
+import { JsonLd } from "@/components/JsonLd";
+
+export const metadata: Metadata = pageMeta({
+  path: "/",
+  description: `Beer, wine, spirits, groceries and deli at ${store.address.street.replace(/ #.*/, "")}, ${store.address.city}, ${store.address.region}. See what we carry, then stop in or call ${store.phone.display}.`,
+});
 
 export default async function Home() {
   const [cat, deals, featuredList, h] = await Promise.all([getCatalog(), activeDeals(), featuredSlugs(), hours()]);
@@ -20,6 +29,7 @@ export default async function Home() {
   const addr = `${store.address.street}, ${store.address.city}, ${store.address.region} ${store.address.postalCode}`;
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-14 px-4 py-6">
+      <JsonLd data={storeLd(h)} />
       <HeroBanner as="h1" eyebrow={`${store.address.street.replace(/ #.*/, "")}, ${store.address.city}`} title="Cold beer. Fresh deli. One stop."
         body={`Beer, wine, spirits, deli and groceries under one roof for ${store.neighborhoods.slice(0, -1).join(", ")} and ${store.neighborhoods.at(-1)}. See what we carry, then stop in or call.`}
         cta={{ label: "Shop beer & seltzers", href: "/c/beer" }}

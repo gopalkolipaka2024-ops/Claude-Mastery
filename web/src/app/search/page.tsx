@@ -5,12 +5,13 @@ import { EmptyState } from "@/components/EmptyState";
 import { getCatalog } from "@/lib/catalog";
 import { didYouMean, searchIds } from "@/lib/search";
 import { store } from "@/config/store";
+import { pageMeta } from "@/lib/seo";
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const q = String((await searchParams).q ?? "").trim();
-  return { title: q ? `Search: ${q}` : "Search", robots: { index: false } };
+  return pageMeta({ title: q ? `Search: ${q}` : "Search", path: "/search", noindex: true, description: `Search the beer, wine, spirits and grocery products at ${store.name}.` });
 }
 
 export default async function SearchPage({ searchParams }: Props) {

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
+import { store } from "@/config/store";
 import { LegalPage } from "@/components/LegalPage";
-export const metadata: Metadata = { title: "Drink responsibly" };
+export const metadata: Metadata = pageMeta({ title: "Drink responsibly", path: "/responsible-drinking", description: `You must be 21 or older to buy alcohol. Tips and resources for drinking responsibly from ${store.name}.` });
 export default function Page() {
   return (
     <LegalPage title="Drink responsibly">

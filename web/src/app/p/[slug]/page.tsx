@@ -12,6 +12,9 @@ import { Icon } from "@/components/Icon";
 import { getCatalog } from "@/lib/catalog";
 import { hours } from "@/lib/content";
 import { directionsUrl, store } from "@/config/store";
+import { pageMeta, sizeBeyondName } from "@/lib/seo";
+import { breadcrumbLd, productLd } from "@/lib/structured-data";
+import { JsonLd } from "@/components/JsonLd";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -24,7 +27,10 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = (await getCatalog()).product((await params).slug);
   if (!p) return {};
-  return { title: p.name, description: `${p.name}${p.size ? `, ${p.size}` : ""}. Available at ${store.name} in ${store.address.city}, ${store.address.region}. Call to confirm price and availability.` };
+  return pageMeta({
+    title: p.name, path: `/p/${p.slug}`,
+    description: `${[p.name, sizeBeyondName(p)].filter(Boolean).join(", ")}, in ${p.category.toLowerCase()} at ${store.name} in ${store.address.city}, ${store.address.region}. Call ${store.phone.display} to confirm price and availability.`,
+  });
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -48,7 +54,8 @@ export default async function ProductPage({ params }: Props) {
   const addr = `${store.address.street}, ${store.address.city}, ${store.address.region} ${store.address.postalCode}`;
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: d.name, href: `/c/${d.slug}` }, { label: a.name, href: `/c/${d.slug}/${a.slug}` }, { label: p.name }]} />
+      <JsonLd data={productLd(p)} />
+      <Breadcrumbs here={`/p/${p.slug}`} items={[{ label: "Home", href: "/" }, { label: d.name, href: `/c/${d.slug}` }, { label: a.name, href: `/c/${d.slug}/${a.slug}` }, { label: p.name }]} />
       <div className="mt-6 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
         <div className="group">
           {p.image ? <ImageGalleryLazy images={[p.image]} name={p.name} /> : (

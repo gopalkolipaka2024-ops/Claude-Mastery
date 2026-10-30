@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { LegalPage } from "@/components/LegalPage";
 import { store } from "@/config/store";
-export const metadata: Metadata = { title: "Accessibility" };
+export const metadata: Metadata = pageMeta({ title: "Accessibility", path: "/accessibility", description: `How the ${store.name} website supports people with disabilities, and how to report a problem.` });
 export default function Page() {
   return (
     <LegalPage title="Accessibility">

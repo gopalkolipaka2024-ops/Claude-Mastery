@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { MapEmbed } from "@/components/MapEmbed";
 import { StoreHours } from "@/components/StoreHours";
 import { Icon } from "@/components/Icon";
 import { directionsUrl, store } from "@/config/store";
 import { hours } from "@/lib/content";
+import { storeLd } from "@/lib/structured-data";
+import { JsonLd } from "@/components/JsonLd";
 
-export const metadata: Metadata = { title: "Hours & directions", description: `Hours, address, phone and directions for ${store.name} in Quincy, MA.` };
+export const metadata: Metadata = pageMeta({ title: "Hours & directions", path: "/store", description: `Hours, address, phone and directions for ${store.name}, ${store.address.street}, ${store.address.city}, ${store.address.region} ${store.address.postalCode}.` });
 
 export default async function StorePage() {
   const h = await hours();
   const addr = `${store.address.street}, ${store.address.city}, ${store.address.region} ${store.address.postalCode}`;
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Hours & directions" }]} />
+      <JsonLd data={storeLd(h)} />
+      <Breadcrumbs here="/store" items={[{ label: "Home", href: "/" }, { label: "Hours & directions" }]} />
       <h1 className="mt-3 text-5xl text-primary">Visit the store</h1>
       <div className="mt-6 grid gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-5">

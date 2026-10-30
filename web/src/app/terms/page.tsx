@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { LegalPage } from "@/components/LegalPage";
 import { store } from "@/config/store";
-export const metadata: Metadata = { title: "Terms of use" };
+export const metadata: Metadata = pageMeta({ title: "Terms of use", path: "/terms", description: `Terms for using the ${store.name} website. Product information is for browsing; call the store to confirm.` });
 export default function Page() {
   return (
     <LegalPage title="Terms of use">

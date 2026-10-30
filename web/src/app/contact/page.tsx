@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ContactForm } from "./ContactForm";
 import { store } from "@/config/store";
 
-export const metadata: Metadata = { title: "Contact us" };
+export const metadata: Metadata = pageMeta({ title: "Contact us", path: "/contact", description: `Call ${store.phone.display} or send a message to ${store.name}, ${store.address.street.replace(/ #.*/, "")}, ${store.address.city}, ${store.address.region}.` });
 
 export default function ContactPage() {
   return (

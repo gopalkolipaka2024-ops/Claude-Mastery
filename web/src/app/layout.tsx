@@ -15,6 +15,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.SITE_URL ?? "http://localhost:3000"),
   title: { default: store.name, template: `%s | ${store.name}` },
   description: "Beer, wine, spirits, groceries and deli in Quincy, MA. Check what we carry, then visit or call.",
+  applicationName: store.name,
+  openGraph: { siteName: store.name, locale: "en_US", type: "website" },
+  twitter: { card: "summary_large_image" },
+  formatDetection: { telephone: false }, // phone numbers are already real tel: links
   // Search engines are kept out until launch; set SITE_INDEXABLE=1 on the production deployment.
   robots: process.env.SITE_INDEXABLE === "1" ? { index: true, follow: true } : { index: false, follow: false },
 };
