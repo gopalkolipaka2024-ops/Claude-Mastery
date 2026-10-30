@@ -1,20 +1,19 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "./Button";
 import { Dialog } from "./Dialog";
 
-const COOKIE = "asm_age_ok";
+export const COOKIE = "asm_age_ok";
 
 /**
  * 21+ confirmation on first visit. The page content is always in the HTML (so search
  * engines can index it); the gate is a client-side overlay. "Yes" and "No" are equally
  * prominent and the answer is remembered for a year.
  */
-export function AgeGate({ storeName }: { storeName: string }) {
-  const [state, setState] = useState<"checking" | "ask" | "ok" | "under">("checking");
-  useEffect(() => { setState(document.cookie.split("; ").includes(`${COOKIE}=1`) ? "ok" : "ask"); }, []);
-  if (state === "checking" || state === "ok") return null;
+export default function AgeGateDialog({ storeName }: { storeName: string }) {
+  const [state, setState] = useState<"ask" | "ok" | "under">("ask");
+  if (state === "ok") return null;
   const yes = () => { document.cookie = `${COOKIE}=1; Max-Age=${60 * 60 * 24 * 365}; Path=/; SameSite=Lax; Secure`; setState("ok"); };
   return (
     <Dialog open onClose={() => {}} hideClose closeOnBackdrop={false} title={state === "under" ? "Sorry" : "Are you 21 or older?"}>

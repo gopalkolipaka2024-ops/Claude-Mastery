@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { ImageGallery } from "@/components/ImageGallery";
+import { ImageGalleryLazy } from "@/components/ImageGalleryLazy";
 import { PackageArt } from "@/components/PackageArt";
 import { PriceBlock } from "@/components/PriceBlock";
 import { StockBadge } from "@/components/StockBadge";
@@ -51,7 +51,7 @@ export default async function ProductPage({ params }: Props) {
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: d.name, href: `/c/${d.slug}` }, { label: a.name, href: `/c/${d.slug}/${a.slug}` }, { label: p.name }]} />
       <div className="mt-6 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
         <div className="group">
-          {p.image ? <ImageGallery images={[p.image]} name={p.name} /> : (
+          {p.image ? <ImageGalleryLazy images={[p.image]} name={p.name} /> : (
             <figure className="relative aspect-square overflow-hidden rounded-lg border border-border bg-surface p-10">
               <PackageArt art={p.art} />
               <figcaption className="absolute right-3 bottom-3 rounded-md bg-surface/90 px-2 py-1 text-xs text-text-muted">Illustration. Packaging may differ.</figcaption>
@@ -92,13 +92,13 @@ export default async function ProductPage({ params }: Props) {
       </div>
       {fromBrand.length > 0 && (
         <section aria-labelledby="brand-h" className="mt-14">
-          <div className="flex items-end justify-between"><h2 id="brand-h" className="text-3xl text-primary">More from {p.brand}</h2><Link href={`/search?q=${encodeURIComponent(p.brand!)}`} className="font-semibold text-primary hover:underline">See all</Link></div>
+          <div className="flex items-end justify-between"><h2 id="brand-h" className="text-3xl text-primary">More from {p.brand}</h2><Link href={`/search?q=${encodeURIComponent(p.brand!)}`} className="font-semibold text-primary hover:underline">All {p.brand} products</Link></div>
           <div className="mt-4"><ProductGrid products={fromBrand} priorityCount={0} /></div>
         </section>
       )}
       {more.length > 0 && (
         <section aria-labelledby="rel-h" className="mt-14">
-          <div className="flex items-end justify-between"><h2 id="rel-h" className="text-3xl text-primary">More in {a.name}</h2><Link href={`/c/${d.slug}/${a.slug}`} className="font-semibold text-primary hover:underline">See all</Link></div>
+          <div className="flex items-end justify-between"><h2 id="rel-h" className="text-3xl text-primary">More in {a.name}</h2><Link href={`/c/${d.slug}/${a.slug}`} className="font-semibold text-primary hover:underline">All {a.name.toLowerCase()}</Link></div>
           <div className="mt-4"><ProductGrid products={more} priorityCount={0} /></div>
         </section>
       )}
