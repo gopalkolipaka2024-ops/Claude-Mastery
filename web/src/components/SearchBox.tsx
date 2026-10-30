@@ -69,7 +69,7 @@ export function SearchBox({ search, onSubmit, placeholder = "Search wine, beer, 
     <div ref={root} className="relative w-full" role="search">
       <form onSubmit={(e) => { e.preventDefault(); if (active >= 0 && options[active]) choose(options[active]); else submit(q); }}>
         <label htmlFor={id} className="sr-only">Search products</label>
-        <div className={cn("flex h-11 items-center gap-2 rounded-full border bg-surface pr-1 pl-4 transition-colors duration-(--duration-fast)",
+        <div className={cn("flex h-12 items-center gap-1 rounded-full border bg-surface pr-0.5 pl-4 transition-colors duration-(--duration-fast)",
           "border-border-input focus-within:border-primary focus-within:ring-2 focus-within:ring-brand-200", disabled && "opacity-50")}>
           <Icon name="search" size={18} className="shrink-0 text-text-muted" />
           <input id={id} type="search" value={q} disabled={disabled} placeholder={placeholder} autoComplete="off" spellCheck={false}
@@ -84,11 +84,11 @@ export function SearchBox({ search, onSubmit, placeholder = "Search wine, beer, 
             className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-text-subtle [&::-webkit-search-cancel-button]:hidden" />
           {status === "loading" && <span className="text-text-muted"><Spinner size={16} /></span>}
           {q && (
-            <button type="button" aria-label="Clear search" onClick={() => { setQ(""); setActive(-1); }} className="inline-grid size-9 place-items-center rounded-full text-text-muted hover:bg-neutral-50">
+            <button type="button" aria-label="Clear search" onClick={() => { setQ(""); setActive(-1); }} className="inline-grid size-11 place-items-center rounded-full text-text-muted hover:bg-neutral-50">
               <Icon name="x" size={16} />
             </button>
           )}
-          <button type="submit" disabled={disabled} className="inline-flex h-9 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover active:bg-primary-active">Search</button>
+          <button type="submit" disabled={disabled} className="inline-flex h-11 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover active:bg-primary-active">Search</button>
         </div>
       </form>
       {expanded && (
@@ -98,21 +98,22 @@ export function SearchBox({ search, onSubmit, placeholder = "Search wine, beer, 
           ) : status === "ready" && !options.length && !showRecent ? (
             <p id={`${id}-list`} className="p-3 text-sm text-text-muted">No matches for “{q.trim()}”. Try a brand, a style like “IPA”, or a size like “30 pk”.</p>
           ) : (
-            <ul id={`${id}-list`} role="listbox" aria-label="Search suggestions">
-              {options.map((o, i) => (
-                <li key={`${o.group}-${o.label}-${i}`} role="presentation">
-                  {(i === 0 || options[i - 1]!.group !== o.group) && (
-                    <p role="presentation" className="flex items-center gap-1 px-3 pt-2 pb-1 text-xs font-semibold tracking-wide text-text-subtle uppercase">
-                      {o.group === "Recent searches" && <Icon name="history" size={12} />}{o.group}
-                    </p>
-                  )}
-                  <div id={`${id}-opt-${i}`} role="option" aria-selected={i === active} onPointerDown={(e) => e.preventDefault()} onClick={() => choose(o)}
-                    className={cn("flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-md px-3", i === active ? "bg-brand-50 text-primary" : "hover:bg-neutral-50")}>
-                    <span>{o.label}</span>{o.meta && <span className="text-sm text-text-muted">{o.meta}</span>}
-                  </div>
-                </li>
+            <div id={`${id}-list`} role="listbox" aria-label="Search suggestions">
+              {/* Options grouped under named headings (Products, Categories, Recent searches) */}
+              {[...new Set(options.map((o) => o.group))].map((group, g) => (
+                <div key={group} role="group" aria-labelledby={`${id}-grp-${g}`}>
+                  <p id={`${id}-grp-${g}`} className="flex items-center gap-1 px-3 pt-2 pb-1 text-xs font-semibold tracking-wide text-text-subtle uppercase">
+                    {group === "Recent searches" && <Icon name="history" size={12} />}{group}
+                  </p>
+                  {options.map((o, i) => o.group !== group ? null : (
+                    <div key={`${o.label}-${i}`} id={`${id}-opt-${i}`} role="option" aria-selected={i === active} onPointerDown={(e) => e.preventDefault()} onClick={() => choose(o)}
+                      className={cn("flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-md px-3", i === active ? "bg-brand-50 text-primary" : "hover:bg-neutral-50")}>
+                      <span>{o.label}</span>{o.meta && <span className="text-sm text-text-muted">{o.meta}</span>}
+                    </div>
+                  ))}
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
       )}

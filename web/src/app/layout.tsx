@@ -33,7 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <PackageArtDefs />
         {ann.map((a) => <AnnouncementBar key={a.id} tone={a.tone}>{a.text}</AnnouncementBar>)}
         <SiteHeader categories={nav} phone={store.phone} hours={h} />
-        <main id="main" className="flex-1">{children}</main>
+        <main id="main" tabIndex={-1} className="flex-1 outline-none">{children}</main>
         <Footer name={store.name} address={store.address} phone={store.phone} email={store.email} week={h.week} directionsHref={directionsUrl()} />
         <AgeGate storeName={store.name} />
       </body>
