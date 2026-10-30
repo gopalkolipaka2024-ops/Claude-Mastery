@@ -11,10 +11,8 @@ export const display = localFont({
 });
 
 export const sans = localFont({
-  src: [
-    { path: "./fonts/public-sans-latin-wght-normal.woff2", weight: "100 900", style: "normal" },
-    { path: "./fonts/public-sans-latin-wght-italic.woff2", weight: "100 900", style: "italic" },
-  ],
+  // Normal style only: the site never sets body text in italic, so the italic file (28 KB) isn't shipped.
+  src: [{ path: "./fonts/public-sans-latin-wght-normal.woff2", weight: "100 900", style: "normal" }],
   variable: "--font-sans-face",
   display: "swap",
   preload: true,
