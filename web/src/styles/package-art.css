@@ -1,0 +1,17 @@
+/* Package drawings (src/lib/package-art.ts). Lettering maps onto the two site typefaces. */
+.package-art svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.package-art .lb { font-family: var(--font-display); font-weight: 800; letter-spacing: .02em; }
+.package-art .lt { font-family: var(--font-sans); font-weight: 700; letter-spacing: .06em; }
+.package-art .ls { font-family: var(--font-display); font-weight: 800; font-style: italic; }
+.package-art .lsr { font-family: var(--font-sans); font-weight: 800; }
+
+/* Light sweep, sliding condensation and rising bubbles, only while hovered or focused. */
+.package-art .sweep, .package-art .drip, .package-art .bub { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .group:hover .package-art .sweep, .group:focus-within .package-art .sweep { animation: pa-sweep 3.4s ease-in-out infinite; }
+  .group:hover .package-art .drip { animation: pa-drip 3.8s ease-in infinite; }
+  .group:hover .package-art .bub { animation: pa-bub 2.6s linear infinite; }
+}
+@keyframes pa-sweep { 0% { transform: translateX(-30px); opacity: 0 } 8% { opacity: 1 } 55% { transform: translateX(170px); opacity: 1 } 56%, 100% { transform: translateX(170px); opacity: 0 } }
+@keyframes pa-drip { 0% { transform: translateY(0); opacity: 0 } 12% { opacity: 1 } 100% { transform: translateY(48px); opacity: 0 } }
+@keyframes pa-bub { 0% { transform: translateY(0); opacity: 0 } 20% { opacity: .85 } 100% { transform: translateY(-64px); opacity: 0 } }

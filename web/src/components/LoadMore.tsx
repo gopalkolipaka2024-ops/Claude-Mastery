@@ -23,7 +23,13 @@ export function LoadMore({ shown, total, nextHref, onLoadMore, loading, error, o
           <Button variant="secondary" onClick={onRetry}>Try again</Button>
         </div>
       ) : remaining > 0 ? (
-        onLoadMore ? (
+        onLoadMore && nextHref ? (
+          <a href={nextHref} rel="next" aria-busy={loading || undefined}
+            onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); onLoadMore(); }}
+            className="inline-flex h-12 items-center gap-2 rounded-md border border-border-input bg-surface px-6 text-lg font-semibold text-primary hover:border-primary hover:bg-brand-50">
+            {loading ? "Loading…" : `Load ${Math.min(remaining, 36)} more`}
+          </a>
+        ) : onLoadMore ? (
           <Button variant="secondary" size="lg" onClick={onLoadMore} loading={loading}>
             {loading ? "Loading…" : `Load ${Math.min(remaining, 36)} more`}
           </Button>

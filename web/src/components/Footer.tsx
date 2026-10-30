@@ -13,7 +13,7 @@ type FooterProps = {
 };
 
 const LINKS = [
-  { title: "Shop", items: [["Deals", "/deals"], ["New arrivals", "/new"], ["Search", "/search"]] },
+  { title: "Shop", items: [["Beer & Seltzers", "/c/beer"], ["Wine", "/c/wine"], ["Spirits", "/c/spirits"], ["Deals", "/deals"]] },
   { title: "Store", items: [["Hours & directions", "/store"], ["Contact us", "/contact"]] },
   { title: "Policies", items: [["Privacy policy", "/privacy"], ["Terms of use", "/terms"], ["Accessibility", "/accessibility"], ["Drink responsibly", "/responsible-drinking"]] },
 ] as const;

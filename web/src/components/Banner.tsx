@@ -23,15 +23,15 @@ export function AnnouncementBar({ children, tone = "brand", dismissible = true, 
 }
 
 /** Wide promotional banner. The image is optional; text always meets contrast on the solid panel. */
-export function HeroBanner({ eyebrow, title, body, cta, image }: {
-  eyebrow?: string; title: string; body?: string; cta?: { label: string; href: string }; image?: ReactNode;
+export function HeroBanner({ eyebrow, title, body, cta, image, as: Heading = "h2" }: {
+  eyebrow?: string; title: string; body?: string; cta?: { label: string; href: string }; image?: ReactNode; as?: "h1" | "h2";
 }) {
   return (
     <section className="relative overflow-hidden rounded-xl bg-brand-700 text-neutral-0">
       <div className="grid items-center gap-6 p-6 sm:p-10 md:grid-cols-[1.1fr_1fr]">
         <div className="flex flex-col gap-3">
           {eyebrow && <p className="text-sm font-semibold tracking-wide text-brand-100 uppercase">{eyebrow}</p>}
-          <h2 className="text-4xl sm:text-5xl">{title}</h2>
+          <Heading className="text-4xl sm:text-5xl">{title}</Heading>
           {body && <p className="max-w-prose text-lg text-brand-100">{body}</p>}
           {cta && (
             <Link href={cta.href} className="mt-2 inline-flex h-12 w-fit items-center rounded-md bg-accent-600 px-6 font-semibold text-neutral-0 transition-colors duration-(--duration-fast) hover:bg-accent-700">

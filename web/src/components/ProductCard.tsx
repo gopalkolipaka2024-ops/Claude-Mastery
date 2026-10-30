@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import type { ProductSummary } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -7,7 +8,7 @@ import { StockBadge } from "./StockBadge";
 import { Icon } from "./Icon";
 
 /** The whole card is one link (one tab stop). Fixed image ratio keeps the grid from shifting. */
-export function ProductCard({ product, priority = false }: { product: ProductSummary; priority?: boolean }) {
+export function ProductCard({ product, priority = false, art }: { product: ProductSummary; priority?: boolean; art?: ReactNode }) {
   const out = product.quantity != null && product.quantity <= 0;
   return (
     <article className={cn("group relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm",
@@ -17,6 +18,8 @@ export function ProductCard({ product, priority = false }: { product: ProductSum
         {product.image ? (
           <Image src={product.image.src} alt={product.image.alt} fill sizes="(min-width: 1024px) 240px, (min-width: 640px) 33vw, 50vw"
             priority={priority} className={cn("object-contain p-4", out && "opacity-60")} />
+        ) : art ? (
+          <div className="h-full p-4">{art}</div>
         ) : (
           <div className="grid h-full place-items-center text-neutral-300" aria-hidden="true"><Icon name="bottle" size={56} /></div>
         )}

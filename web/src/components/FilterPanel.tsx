@@ -68,8 +68,8 @@ function PriceRange({ min, max, onChange, disabled }: { min?: number; max?: numb
   );
 }
 
-export function FilterPanel({ facets, value, onChange, disabled, showPrice = true, showTitle = true }: {
-  facets: Facet[]; value: FilterState; onChange: (v: FilterState) => void; disabled?: boolean; showPrice?: boolean; showTitle?: boolean;
+export function FilterPanel({ facets, value, onChange, disabled, showPrice = true, showTitle = true, showStock = true }: {
+  facets: Facet[]; value: FilterState; onChange: (v: FilterState) => void; disabled?: boolean; showPrice?: boolean; showTitle?: boolean; showStock?: boolean;
 }) {
   const active = facets.reduce((n, f) => n + (value.facets?.[f.id]?.length ?? 0), 0) + (value.inStock ? 1 : 0) + (value.minPrice != null || value.maxPrice != null ? 1 : 0);
   const toggle = (fid: string, v: string) => {
@@ -78,7 +78,7 @@ export function FilterPanel({ facets, value, onChange, disabled, showPrice = tru
   };
   return (
     <div aria-label="Filters" role="region" aria-busy={disabled || undefined}>
-      <div className="flex min-h-11 items-center justify-between pb-2">
+      <div className={cn("flex min-h-11 items-center justify-between pb-2", !showTitle && active === 0 && "hidden")}>
         {showTitle ? <h2 className="text-2xl text-primary">Filter</h2> : <span />}
         {active > 0 && (
           <button type="button" disabled={disabled} onClick={() => onChange({})} className="disabled:opacity-50 min-h-11 text-sm font-semibold text-primary underline-offset-2 hover:underline">
@@ -86,10 +86,10 @@ export function FilterPanel({ facets, value, onChange, disabled, showPrice = tru
           </button>
         )}
       </div>
-      <label className={cn("flex min-h-11 cursor-pointer items-center justify-between gap-3 border-t border-border py-2 font-semibold", disabled && "cursor-not-allowed")}>
+      {showStock && <label className={cn("flex min-h-11 cursor-pointer items-center justify-between gap-3 border-t border-border py-2 font-semibold", disabled && "cursor-not-allowed")}>
         In stock only
         <input type="checkbox" role="switch" checked={!!value.inStock} disabled={disabled} onChange={(e) => onChange({ ...value, inStock: e.target.checked || undefined })} className="size-5 accent-brand-700" />
-      </label>
+      </label>}
       <Accordion>
         {showPrice && <PriceRange min={value.minPrice} max={value.maxPrice} disabled={disabled} onChange={(minPrice, maxPrice) => onChange({ ...value, minPrice, maxPrice })} />}
         {facets.map((f) => <FacetGroup key={f.id} facet={f} selected={value.facets?.[f.id] ?? []} disabled={disabled} onToggle={(v) => toggle(f.id, v)} />)}
