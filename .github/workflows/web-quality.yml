@@ -5,6 +5,8 @@ name: Web quality
 #   - first-load JavaScript over 150 KB (gzip) on Home, Category, Search or Product
 #   - Lighthouse (mobile, simulated slow 4G, median of 5 runs) under 95 on Performance,
 #     Accessibility, Best Practices or SEO, LCP over 2.5 s, CLS over 0.1, or TBT over 200 ms
+#   - any accessibility failure: axe on every page and Storybook story, plus keyboard checks
+#     (skip link, visible focus, dialog focus traps, 44px tap targets, 320px reflow)
 # Lighthouse reports are kept as a workflow artifact for 14 days.
 on:
   pull_request:
@@ -54,6 +56,14 @@ jobs:
           npm run start -- -p 3100 > /tmp/next.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3100/ && break; sleep 1; done
           npm run budget:js
+      - name: Install Chromium for browser checks
+        run: npx playwright install --with-deps chromium
+      - name: Page checks (axe, SEO basics, filters, search)
+        run: npm run test:pages -- http://localhost:3100
+      - name: Keyboard and interaction checks (focus, dialogs, tap targets, reflow)
+        run: npm run test:keyboard -- http://localhost:3100
+      - name: Storybook accessibility (axe on every story)
+        run: npm run build-storybook && npm run test:a11y
       - name: Keep Lighthouse reports
         if: always()
         uses: actions/upload-artifact@v4
