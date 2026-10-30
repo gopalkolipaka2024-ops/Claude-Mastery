@@ -13,17 +13,27 @@
     "build-storybook": "storybook build -o storybook-static",
     "test:a11y": "node scripts/a11y-stories.mjs storybook-static",
     "catalog:import": "node scripts/import-catalog.mjs",
-    "test:pages": "node scripts/check-pages.mjs"
+    "test:pages": "node scripts/check-pages.mjs",
+    "db:start": "node scripts/dev-db.mjs start",
+    "db:generate": "drizzle-kit generate",
+    "sync": "tsx scripts/sync.ts",
+    "test": "vitest run",
+    "db:migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
     "@fontsource-variable/public-sans": "5.3.0",
     "@fontsource/big-shoulders-display": "5.3.0",
+    "@neondatabase/serverless": "1.2.0",
     "clsx": "2.1.1",
+    "drizzle-orm": "0.45.4",
+    "jose": "6.2.12",
     "minisearch": "7.2.0",
     "next": "16.4.2",
+    "pg": "8.23.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "server-only": "0.0.1"
+    "server-only": "0.0.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "10.6.2",
@@ -31,12 +41,17 @@
     "@storybook/nextjs-vite": "10.6.2",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "22.20.5",
+    "@types/pg": "8.23.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "axe-core": "4.14.0",
+    "drizzle-kit": "0.31.11",
+    "embedded-postgres": "18.4.0-beta.17",
     "storybook": "10.6.2",
     "storybook-addon-pseudo-states": "10.6.2",
     "tailwindcss": "4.3.3",
-    "typescript": "5.9.3"
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
   }
 }

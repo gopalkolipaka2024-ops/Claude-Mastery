@@ -5,3 +5,5 @@ storybook-static/
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+.dev-db/
+!.env.example
