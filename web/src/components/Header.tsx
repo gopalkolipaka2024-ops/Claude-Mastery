@@ -29,9 +29,9 @@ export function Header({ categories, phone, hours, search, onSearch, now }: Head
       </a>
       <header className="sticky top-0 z-(--z-sticky) border-b-3 border-accent-600 bg-surface">
         <div className="bg-brand-800 text-neutral-0">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1 text-sm">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 text-sm">
             <span className="[&_*]:text-neutral-0"><StoreHours variant="compact" {...hours} now={now} /></span>
-            <a href={`tel:${phone.e164}`} className="inline-flex min-h-9 items-center gap-1 font-semibold hover:underline">
+            <a href={`tel:${phone.e164}`} className="inline-flex min-h-11 items-center gap-1 font-semibold hover:underline">
               <Icon name="phone" size={16} />Call {phone.display}
             </a>
           </div>

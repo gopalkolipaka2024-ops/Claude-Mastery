@@ -99,13 +99,13 @@ export default async function ProductPage({ params }: Props) {
       </div>
       {fromBrand.length > 0 && (
         <section aria-labelledby="brand-h" className="mt-14">
-          <div className="flex items-end justify-between"><h2 id="brand-h" className="text-3xl text-primary">More from {p.brand}</h2><Link href={`/search?q=${encodeURIComponent(p.brand!)}`} className="font-semibold text-primary hover:underline">All {p.brand} products</Link></div>
+          <div className="flex items-end justify-between"><h2 id="brand-h" className="text-3xl text-primary">More from {p.brand}</h2><Link href={`/search?q=${encodeURIComponent(p.brand!)}`} className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline">All {p.brand} products</Link></div>
           <div className="mt-4"><ProductGrid products={fromBrand} priorityCount={0} /></div>
         </section>
       )}
       {more.length > 0 && (
         <section aria-labelledby="rel-h" className="mt-14">
-          <div className="flex items-end justify-between"><h2 id="rel-h" className="text-3xl text-primary">More in {a.name}</h2><Link href={`/c/${d.slug}/${a.slug}`} className="font-semibold text-primary hover:underline">All {a.name.toLowerCase()}</Link></div>
+          <div className="flex items-end justify-between"><h2 id="rel-h" className="text-3xl text-primary">More in {a.name}</h2><Link href={`/c/${d.slug}/${a.slug}`} className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline">All {a.name.toLowerCase()}</Link></div>
           <div className="mt-4"><ProductGrid products={more} priorityCount={0} /></div>
         </section>
       )}

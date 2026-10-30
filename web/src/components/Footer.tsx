@@ -37,9 +37,9 @@ export function Footer({ name, address, phone, email, week, directionsHref }: Fo
           <address className="not-italic">
             {address.street}<br />{address.city}, {address.region} {address.postalCode}
           </address>
-          <a href={directionsHref} target="_blank" rel="noopener" className="w-fit font-semibold text-neutral-0 underline-offset-2 hover:underline">Get directions</a>
-          <a href={`tel:${phone.e164}`} className="w-fit font-semibold text-neutral-0 underline-offset-2 hover:underline">{phone.display}</a>
-          {email && <a href={`mailto:${email}`} className="w-fit text-neutral-0 underline-offset-2 hover:underline">{email}</a>}
+          <a href={directionsHref} target="_blank" rel="noopener" className="inline-flex min-h-11 w-fit items-center font-semibold text-neutral-0 underline-offset-2 hover:underline">Get directions</a>
+          <a href={`tel:${phone.e164}`} className="inline-flex min-h-11 w-fit items-center font-semibold text-neutral-0 underline-offset-2 hover:underline">{phone.display}</a>
+          {email && <a href={`mailto:${email}`} className="inline-flex min-h-11 w-fit items-center text-neutral-0 underline-offset-2 hover:underline">{email}</a>}
           <ul className="mt-2 text-sm">{hoursSummary(week).map((l) => <li key={l}>{l}</li>)}</ul>
         </div>
         {LINKS.map((col) => (

@@ -37,7 +37,7 @@ export default async function Home() {
 
       {deals.length > 0 && (
         <section aria-labelledby="deals-h">
-          <div className="flex items-end justify-between"><h2 id="deals-h" className="text-4xl text-primary">This week&apos;s deals</h2><Link href="/deals" className="font-semibold text-primary hover:underline">All deals</Link></div>
+          <div className="flex items-end justify-between"><h2 id="deals-h" className="text-4xl text-primary">This week&apos;s deals</h2><Link href="/deals" className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline">All deals</Link></div>
           {dealProducts.length > 0 && <div className="mt-4"><ProductGrid products={dealProducts} /></div>}
         </section>
       )}
@@ -70,7 +70,7 @@ export default async function Home() {
         <section aria-labelledby="gd-h">
           <div className="flex items-end justify-between gap-4">
             <div><h2 id="gd-h" className="text-4xl text-primary">Stocked for game day</h2><p className="text-text-muted">Cold beer, seltzers, chips and ice our customers grab before kickoff.</p></div>
-            <Link href="/search?q=game%20day" className="hidden font-semibold text-primary hover:underline sm:inline">See all game day picks</Link>
+            <Link href="/search?q=game%20day" className="hidden min-h-11 items-center font-semibold text-primary hover:underline sm:inline-flex">See all game day picks</Link>
           </div>
           <div className="mt-4"><ProductGrid products={gameDay} /></div>
         </section>

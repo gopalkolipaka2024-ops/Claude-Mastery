@@ -19,7 +19,7 @@ export function Breadcrumbs({ items, here }: { items: Crumb[]; here?: string }) 
                 {last || !c.href ? (
                   <span aria-current={last ? "page" : undefined} className={last ? "font-semibold text-text" : undefined}>{c.label}</span>
                 ) : (
-                  <Link href={c.href} className="rounded-sm underline-offset-2 hover:text-primary hover:underline">{c.label}</Link>
+                  <Link href={c.href} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm underline-offset-2 hover:text-primary hover:underline">{c.label}</Link>
                 )}
                 {!last && <Icon name="chevronRight" size={14} className="text-text-subtle" />}
               </li>

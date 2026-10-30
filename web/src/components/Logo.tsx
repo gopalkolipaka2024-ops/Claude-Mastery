@@ -3,7 +3,7 @@ import Link from "next/link";
 /** Original wordmark: a navy tile with a red tide line, and the store name in the display face. */
 export function Logo({ name = "Adams Shore", tagline = "Super Market & Liquors" }: { name?: string; tagline?: string }) {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 rounded-md">
+    <Link href="/" className="flex min-h-11 shrink-0 items-center gap-2 rounded-md">
       <svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true">
         <rect width="48" height="48" rx="10" fill="var(--color-brand-700)" />
         <path d="M0 33 Q12 27 24 33 T48 33 V48 H0Z" fill="var(--color-accent-600)" />
