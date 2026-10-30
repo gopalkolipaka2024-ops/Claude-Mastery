@@ -52,7 +52,7 @@ for (const [w, h, name] of [[1366, 900, "desktop"], [390, 844, "mobile"]]) {
   if (name === "desktop") {
     const count = page.locator("p[aria-live]").first();
     const t0 = await count.textContent();
-    await page.getByRole("region", { name: "Filters" }).getByLabel(/^Light beer/).check();
+    await page.getByRole("complementary", { name: "Filters" }).getByRole("link", { name: /^Light beer/ }).click();
     await page.waitForURL(/aisle=light-beer/);
     await page.waitForFunction((t) => document.querySelector("p[aria-live]")?.textContent !== t, t0);
     const t1 = await count.textContent();
@@ -67,7 +67,8 @@ for (const [w, h, name] of [[1366, 900, "desktop"], [390, 844, "mobile"]]) {
   } else {
     await page.getByRole("button", { name: /^Filter/ }).click();
     const sheet = page.getByRole("dialog", { name: "Filter" });
-    if (!(await sheet.isVisible())) fail("mobile filter sheet did not open");
+    // The sheet's code downloads on first tap, so give it a moment
+    if (!(await sheet.waitFor({ state: "visible", timeout: 5000 }).then(() => true, () => false))) fail("mobile filter sheet did not open");
     if (shots) await page.screenshot({ path: `${shots}/mobile-filter-sheet.png` });
     await page.keyboard.press("Escape");
     if (await sheet.isVisible()) fail("mobile filter sheet did not close on Escape");

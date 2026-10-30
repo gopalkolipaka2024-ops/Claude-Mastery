@@ -16,7 +16,7 @@ export default async function DepartmentPage({ params, searchParams }: Props) {
   const d = cat.department((await params).dept);
   if (!d) notFound();
   return (
-    <ListingPage title={d.name} crumbs={[{ label: "Home", href: "/" }, { label: d.name }]} products={cat.productsIn(d.slug)}
+    <ListingPage title={d.name} path={`/c/${d.slug}`} crumbs={[{ label: "Home", href: "/" }, { label: d.name }]} products={cat.productsIn(d.slug)}
       searchParams={await searchParams} aisleNames={Object.fromEntries(d.children.map((a) => [a.slug, a.name]))} />
   );
 }

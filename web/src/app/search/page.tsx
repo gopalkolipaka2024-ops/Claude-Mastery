@@ -26,7 +26,7 @@ export default async function SearchPage({ searchParams }: Props) {
   const aisleNames = Object.fromEntries(cat.departments().flatMap((d) => d.children.map((a) => [a.slug, a.name])));
   const suggestion = q && !products.length ? await didYouMean(q) : null;
   return (
-    <ListingPage title={q ? `Results for “${q}”` : "Search"} crumbs={[{ label: "Home", href: "/" }, { label: "Search" }]} q={q}
+    <ListingPage path="/search" title={q ? `Results for “${q}”` : "Search"} crumbs={[{ label: "Home", href: "/" }, { label: "Search" }]} q={q}
       products={products} searchOrder={order} searchParams={sp} aisleNames={aisleNames}
       empty={
         <EmptyState title={q ? `No matches for “${q}”` : "Search the store"}

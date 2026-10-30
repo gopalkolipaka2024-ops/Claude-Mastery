@@ -18,7 +18,7 @@ export default async function AislePage({ params, searchParams }: Props) {
   const d = cat.department(dept), a = cat.aisle(dept, aisle);
   if (!d || !a) notFound();
   return (
-    <ListingPage title={a.name} crumbs={[{ label: "Home", href: "/" }, { label: d.name, href: `/c/${d.slug}` }, { label: a.name }]}
+    <ListingPage title={a.name} path={`/c/${d.slug}/${a.slug}`} crumbs={[{ label: "Home", href: "/" }, { label: d.name, href: `/c/${d.slug}` }, { label: a.name }]}
       products={cat.productsIn(d.slug, a.slug)} searchParams={await searchParams} aisleNames={{ [a.slug]: a.name }} />
   );
 }
