@@ -8,6 +8,7 @@ const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:n
 
 /**
  * Accessible modal: traps focus, closes on Escape or backdrop click, locks page scroll,
+ * makes the rest of the page inert (unreachable by mouse, keyboard and screen readers),
  * and returns focus to whatever opened it. `placement` makes it a centered dialog or a
  * bottom sheet (mobile filters).
  */
@@ -17,16 +18,22 @@ export function Dialog({ open, onClose, title, children, footer, placement = "ce
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const opener = useRef<Element | null>(null);
+  // Callers often pass an inline arrow; keep the latest one without re-running the open/close effect.
+  const close = useRef(onClose);
+  useEffect(() => { close.current = onClose; });
 
   useEffect(() => {
     if (!open) return;
     opener.current = document.activeElement;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const portal = panel.current?.closest("body > *");
+    const others = [...document.body.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el !== portal && !el.inert);
+    others.forEach((el) => { el.inert = true; });
     const first = panel.current?.querySelector<HTMLElement>(FOCUSABLE);
     (first ?? panel.current)?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !hideClose) { e.preventDefault(); onClose(); return; }
+      if (e.key === "Escape" && !hideClose) { e.preventDefault(); close.current(); return; }
       if (e.key !== "Tab" || !panel.current) return;
       const list = [...panel.current.querySelectorAll<HTMLElement>(FOCUSABLE)].filter((el) => el.offsetParent !== null);
       if (!list.length) return;
@@ -38,9 +45,10 @@ export function Dialog({ open, onClose, title, children, footer, placement = "ce
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
+      others.forEach((el) => { el.inert = false; });
       (opener.current as HTMLElement | null)?.focus?.();
     };
-  }, [open, onClose, hideClose]);
+  }, [open, hideClose]);
 
   if (!open || typeof document === "undefined") return null;
   const sheet = placement === "sheet";
