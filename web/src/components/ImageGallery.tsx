@@ -23,6 +23,7 @@ export function ImageGallery({ images, name }: { images: ProductImage[]; name: s
         onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); setOrigin(`${((e.clientX - r.left) / r.width) * 100}% ${((e.clientY - r.top) / r.height) * 100}%`); }}
         className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-surface cursor-zoom-in">
         <Image src={cur.src} alt={cur.alt} fill priority sizes="(min-width: 1024px) 560px, 100vw"
+          {...(cur.blur ? { placeholder: "blur" as const, blurDataURL: cur.blur } : {})}
           style={{ transformOrigin: origin }} className="object-contain p-6 transition-transform duration-(--duration-base) group-hover:scale-150" />
         <span className="absolute right-3 bottom-3 inline-flex items-center gap-1 rounded-md bg-surface/90 px-2 py-1 text-xs font-semibold text-text-muted"><Icon name="zoom" size={14} />Zoom</span>
       </button>

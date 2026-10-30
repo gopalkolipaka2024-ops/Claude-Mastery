@@ -16,7 +16,7 @@ export async function loadSnapshot(): Promise<Snapshot> {
   const d = db();
   const dept = alias(categories, "dept");
   const firstImage = d.$with("first_image").as(
-    d.selectDistinctOn([images.productId], { productId: images.productId, url: images.url, alt: images.alt, width: images.width, height: images.height })
+    d.selectDistinctOn([images.productId], { productId: images.productId, url: images.url, alt: images.alt, width: images.width, height: images.height, blur: images.blur })
       .from(images).orderBy(images.productId, asc(images.position)),
   );
   const [version, rows, cats, redirects] = await Promise.all([
@@ -29,7 +29,7 @@ export async function loadSnapshot(): Promise<Snapshot> {
       upc: variants.upc, pack: variants.pack, volume: variants.volume,
       regularCents: prices.regularCents, saleCents: prices.saleCents, saleStartsAt: prices.saleStartsAt, saleEndsAt: prices.saleEndsAt, priceUpdated: prices.updatedAt,
       quantity: stock.quantity, stockUpdated: stock.updatedAt,
-      imgUrl: firstImage.url, imgAlt: firstImage.alt, imgW: firstImage.width, imgH: firstImage.height,
+      imgUrl: firstImage.url, imgAlt: firstImage.alt, imgW: firstImage.width, imgH: firstImage.height, imgBlur: firstImage.blur,
     }).from(products)
       .innerJoin(categories, eq(categories.id, products.categoryId))
       .innerJoin(dept, eq(dept.id, categories.parentId))
@@ -50,7 +50,7 @@ export async function loadSnapshot(): Promise<Snapshot> {
     id: r.id, slug: r.slug, name: r.name, rank: r.rank, dept: r.deptSlug, aisle: r.aisleSlug, category: r.aisleName,
     brand: r.brand, size: [r.pack, r.volume].filter(Boolean).join(", ") || null, pack: r.pack, volume: r.volume, upc: r.upc,
     price: { regularCents: r.regularCents, saleCents: r.saleCents, saleStartsAt: iso(r.saleStartsAt), saleEndsAt: iso(r.saleEndsAt) },
-    quantity: r.quantity, image: r.imgUrl ? { src: r.imgUrl, alt: r.imgAlt!, width: r.imgW!, height: r.imgH! } : null,
+    quantity: r.quantity, image: r.imgUrl ? { src: r.imgUrl, alt: r.imgAlt!, width: r.imgW!, height: r.imgH!, blur: r.imgBlur } : null,
     description: r.description, abv: r.abv == null ? null : Number(r.abv), country: r.country, region: r.region, varietal: r.varietal,
     gameDay: r.gameDay, note: r.note,
     art: { id: r.id, name: r.name, ...(r.art ?? { dept: "", aisle: r.aisleName, shape: "box", body: "#2d4f92", ink: "#ffffff", flv: "" }) },

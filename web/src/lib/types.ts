@@ -1,4 +1,4 @@
-export type ProductImage = { src: string; alt: string; width: number; height: number };
+export type ProductImage = { src: string; alt: string; width: number; height: number; blur?: string | null };
 
 export type Price = {
   regularCents: number | null; // null = no price published yet

@@ -93,6 +93,8 @@ export const images = pgTable("images", {
   alt: text("alt").notNull(),
   width: integer("width").notNull(),
   height: integer("height").notNull(),
+  /** Tiny base64 data URL (about 10x10 px) shown blurred while the photo loads. Filled by the image import. */
+  blur: text("blur"),
   position: smallint("position").notNull().default(0),
 }, (t) => [index("images_product").on(t.productId, t.position)]);
 

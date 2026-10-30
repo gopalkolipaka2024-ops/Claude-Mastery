@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import type { ProductSummary } from "@/lib/types";
@@ -6,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { PriceBlock } from "./PriceBlock";
 import { StockBadge } from "./StockBadge";
 import { Icon } from "./Icon";
+import { Photo } from "./Photo";
 
 /** The whole card is one link (one tab stop). Fixed image ratio keeps the grid from shifting. */
 export function ProductCard({ product, priority = false, art }: { product: ProductSummary; priority?: boolean; art?: ReactNode }) {
@@ -16,8 +16,8 @@ export function ProductCard({ product, priority = false, art }: { product: Produ
       "focus-within:shadow-md")}>
       <div className="relative aspect-[4/5] bg-surface-sunken">
         {product.image ? (
-          <Image src={product.image.src} alt={product.image.alt} fill sizes="(min-width: 1024px) 240px, (min-width: 640px) 33vw, 50vw"
-            priority={priority} className={cn("object-contain p-4", out && "opacity-60")} />
+          <Photo image={product.image} sizes="(min-width: 1280px) 280px, (min-width: 640px) 30vw, 46vw" priority={priority}
+            className={cn("absolute inset-0 p-4", out && "opacity-60")} />
         ) : art ? (
           <div className="h-full p-4">{art}</div>
         ) : (
@@ -27,7 +27,7 @@ export function ProductCard({ product, priority = false, art }: { product: Produ
       <div className="flex flex-1 flex-col gap-1 p-3">
         {product.brand && <p className="text-xs font-semibold tracking-wide text-text-muted uppercase">{product.brand}</p>}
         <h3 className="font-sans text-base leading-snug font-semibold">
-          <Link href={`/p/${product.slug}`} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-focus-within:underline">
+          <Link href={`/p/${product.slug}`} prefetch={false} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-focus-within:underline">
             {product.name}
           </Link>
         </h3>
