@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HeroBanner } from "@/components/Banner";
+import { artUrl } from "@/lib/art-url";
 import { PackageArt } from "@/components/PackageArt";
 import { ProductGrid } from "@/components/ProductGrid";
 import { StoreHours } from "@/components/StoreHours";
@@ -40,7 +41,7 @@ export default async function Home() {
               <li key={d.slug}>
                 <Link href={`/c/${d.slug}`} className="group flex h-full flex-col rounded-lg border border-border bg-surface p-4 shadow-sm transition-[box-shadow,transform] duration-(--duration-base) hover:-translate-y-0.5 hover:shadow-md">
                   <div className="relative h-28" aria-hidden="true">
-                    {trio.map((p, i) => <div key={p.id} className="absolute bottom-0 h-full w-[46%]" style={{ left: `${i * 27}%`, zIndex: i === 1 ? 2 : 1 }}><PackageArt art={p.art} /></div>)}
+                    {trio.map((p, i) => <div key={p.id} className="absolute bottom-0 h-full w-[46%]" style={{ left: `${i * 27}%`, zIndex: i === 1 ? 2 : 1 }}><img src={artUrl(p.art)} alt="" width={120} height={160} loading="lazy" decoding="async" className="h-full w-full object-contain" /></div>)}
                   </div>
                   <span className="mt-3 font-display text-2xl text-primary">{d.name}</span>
                   <span className="text-sm text-text-muted">{d.count.toLocaleString()} products · {d.children.length} aisles</span>
@@ -59,7 +60,7 @@ export default async function Home() {
         <section aria-labelledby="gd-h">
           <div className="flex items-end justify-between gap-4">
             <div><h2 id="gd-h" className="text-4xl text-primary">Stocked for game day</h2><p className="text-text-muted">Cold beer, seltzers, chips and ice our customers grab before kickoff.</p></div>
-            <Link href="/search?q=game%20day" className="hidden font-semibold text-primary hover:underline sm:inline">See more</Link>
+            <Link href="/search?q=game%20day" className="hidden font-semibold text-primary hover:underline sm:inline">See all game day picks</Link>
           </div>
           <div className="mt-4"><ProductGrid products={gameDay} /></div>
         </section>

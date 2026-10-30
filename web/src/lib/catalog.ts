@@ -61,6 +61,7 @@ export function invalidateCatalog() { state.snap = null; }
 export async function getCatalog() {
   const s = hasDatabase() ? await fromDb() : fromJson();
   const bySlug = new Map(s.products.map((p) => [p.slug, p]));
+  const byId = new Map(s.products.map((p) => [p.id, p]));
   const deptBy = new Map(s.departments.map((d) => [d.slug, d]));
   return {
     version: s.version,
@@ -69,6 +70,7 @@ export async function getCatalog() {
     department: (slug: string) => deptBy.get(slug),
     aisle: (dept: string, slug: string) => deptBy.get(dept)?.children.find((a) => a.slug === slug),
     product: (slug: string) => bySlug.get(slug),
+    productById: (id: number) => byId.get(id),
     /** New slug for a product that was renamed, so old links 301. */
     redirect: (slug: string) => s.redirects.get(slug) ?? null,
     all: () => s.products,
