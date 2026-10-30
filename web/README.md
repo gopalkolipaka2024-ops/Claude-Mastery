@@ -19,7 +19,7 @@ Backend setup and operations: [`docs/backend.md`](docs/backend.md). Environment 
 | `npm run catalog:import` | Rebuilds `src/data/catalog.json` from `../catalog.js` (the cleaned Bottle POS export) |
 | `npm run build && npm start -- -p 3100`, then `npm run budget:js` | First-load JavaScript per key route (gzip), fails over 150 KB |
 | `npm run build && npm run lhci` | Lighthouse CI on Home, Category, Search, Product: median of 5 mobile runs against the budgets in `lighthouserc.cjs` (see docs/performance.md) |
-| `npm run build && npm start`, then `npm run test:pages` | Browser checks of every page type on desktop and phone: axe, age gate, filters + Back, load more, autocomplete |
+| `npm run build && npm start`, then `npm run test:pages` | Browser checks of every page type on desktop and phone: axe, headings, canonical, unique titles, JSON-LD, age gate, filters + Back, load more, autocomplete (SEO details: docs/seo.md) |
 
 ## Pages
 
