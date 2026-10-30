@@ -4,10 +4,12 @@ import { MapEmbed } from "@/components/MapEmbed";
 import { StoreHours } from "@/components/StoreHours";
 import { Icon } from "@/components/Icon";
 import { directionsUrl, store } from "@/config/store";
+import { hours } from "@/lib/content";
 
 export const metadata: Metadata = { title: "Hours & directions", description: `Hours, address, phone and directions for ${store.name} in Quincy, MA.` };
 
-export default function StorePage() {
+export default async function StorePage() {
+  const h = await hours();
   const addr = `${store.address.street}, ${store.address.city}, ${store.address.region} ${store.address.postalCode}`;
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
@@ -23,7 +25,7 @@ export default function StorePage() {
               <a href={`tel:${store.phone.e164}`} className="inline-flex h-11 items-center gap-2 rounded-md border border-border-input bg-surface px-4 font-semibold text-primary hover:border-primary"><Icon name="phone" size={18} />{store.phone.display}</a>
             </div>
           </section>
-          <StoreHours week={[...store.hours]} timeZone={store.timeZone} holidays={[...store.holidayHours]} />
+          <StoreHours week={h.week} timeZone={h.timeZone} holidays={h.holidays} />
           {store.parking && <section aria-labelledby="park-h"><h2 id="park-h" className="text-2xl text-primary">Parking</h2><p className="mt-1">{store.parking}</p></section>}
           <section aria-labelledby="hood-h">
             <h2 id="hood-h" className="text-2xl text-primary">Neighborhoods we serve</h2>

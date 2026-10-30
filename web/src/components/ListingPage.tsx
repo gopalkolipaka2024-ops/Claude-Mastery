@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { Product } from "@/lib/catalog";
-import { availableSorts, parseParams, runListing } from "@/lib/listing";
+import { capabilities, FACET_IDS, parseParams, runListing } from "@/lib/listing";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { ProductGrid } from "./ProductGrid";
 import { ListingFilters, ListingLoadMore, ListingSort } from "./ListingControls";
@@ -13,11 +13,12 @@ export function ListingPage({ title, crumbs, products, searchParams, aisleNames,
   title: string; crumbs: Crumb[]; products: Product[]; searchParams: SP; aisleNames: Record<string, string>;
   q?: string; searchOrder?: Map<number, number>; intro?: ReactNode; empty?: ReactNode;
 }) {
-  const sorts = availableSorts(products);
+  const cap = capabilities(products);
+  const sorts = cap.sorts;
   const params = parseParams(searchParams, sorts);
   const { total, shown, facets } = runListing(products, params, aisleNames, { searchOrder });
-  const showStock = products.some((p) => p.quantity != null);
-  const anyFilter = params.aisle.length + params.pack.length + params.volume.length > 0 || params.inStock;
+  const showStock = cap.stock, showPrice = cap.priced;
+  const anyFilter = FACET_IDS.some((f) => params[f].length) || params.inStock || params.min != null || params.max != null;
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
       <Breadcrumbs items={crumbs} />
@@ -28,7 +29,7 @@ export function ListingPage({ title, crumbs, products, searchParams, aisleNames,
       <div className="mt-6 grid gap-8 lg:grid-cols-[260px_1fr]">
         <aside className="hidden lg:block" aria-label="Filters">
           <div className="sticky top-44 max-h-[calc(100dvh-12rem)] overflow-y-auto pr-2">
-            <ListingFilters variant="rail" facets={facets} params={params} q={q} total={total} showStock={showStock} />
+            <ListingFilters variant="rail" facets={facets} params={params} q={q} total={total} showStock={showStock} showPrice={showPrice} />
           </div>
         </aside>
         <div className="min-w-0">
@@ -36,7 +37,7 @@ export function ListingPage({ title, crumbs, products, searchParams, aisleNames,
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-text-muted" aria-live="polite">{total.toLocaleString()} {total === 1 ? "product" : "products"}</p>
             <div className="flex items-center gap-2">
-              <div className="lg:hidden"><ListingFilters variant="drawer" facets={facets} params={params} q={q} total={total} showStock={showStock} /></div>
+              <div className="lg:hidden"><ListingFilters variant="drawer" facets={facets} params={params} q={q} total={total} showStock={showStock} showPrice={showPrice} /></div>
               <ListingSort params={params} q={q} sorts={sorts} />
             </div>
           </div>

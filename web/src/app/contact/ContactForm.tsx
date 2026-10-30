@@ -1,11 +1,12 @@
 "use client";
+import Script from "next/script";
 import { useActionState, useEffect, useRef } from "react";
 import { Button } from "@/components/Button";
 import { sendContact, type ContactState } from "./actions";
 
 const field = "h-11 w-full rounded-md border bg-surface px-3 text-text";
 
-export function ContactForm({ phone }: { phone: { display: string; e164: string } }) {
+export function ContactForm({ phone, turnstileKey }: { phone: { display: string; e164: string }; turnstileKey?: string | null }) {
   const [state, action, pending] = useActionState<ContactState, FormData>(sendContact, { status: "idle" });
   const summary = useRef<HTMLDivElement>(null);
   useEffect(() => { if (state.status !== "idle") summary.current?.focus(); }, [state]);
@@ -16,6 +17,11 @@ export function ContactForm({ phone }: { phone: { display: string; e164: string 
       <div ref={summary} tabIndex={-1} aria-live="polite" className="outline-none">
         {state.status === "invalid" && <p className="rounded-md bg-danger-50 p-3 text-danger-700">Please fix {Object.keys(err).length === 1 ? "the field" : "the fields"} below.</p>}
         {state.status === "sent" && <p className="rounded-md bg-success-50 p-3 text-success-700">Thanks. Your message was sent.</p>}
+        {state.status === "failed" && (
+          <p role="alert" className="rounded-md bg-danger-50 p-3 text-danger-700">
+            Your message didn&apos;t go through on our side. Please try again in a minute, or call <a className="font-semibold underline" href={`tel:${phone.e164}`}>{phone.display}</a>.
+          </p>
+        )}
         {state.status === "unavailable" && (
           <p className="rounded-md bg-warning-50 p-3 text-warning-700">
             Online messages aren&apos;t switched on yet, so this wasn&apos;t sent. Please call <a className="font-semibold underline" href={`tel:${phone.e164}`}>{phone.display}</a>.
@@ -41,6 +47,14 @@ export function ContactForm({ phone }: { phone: { display: string; e164: string 
         {err.message && <p id="message-err" className="text-sm text-danger-600">{err.message}</p>}
       </div>
       <div aria-hidden="true" className="absolute -left-[9999px]"><label>Leave this empty<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
+      {turnstileKey && (
+        <div className="flex flex-col gap-1">
+          {/* Cloudflare Turnstile: usually invisible; loads only when the form is configured to send. */}
+          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
+          <div className="cf-turnstile" data-sitekey={turnstileKey} data-theme="light" />
+          {err.captcha && <p className="text-sm text-danger-600">{err.captcha}</p>}
+        </div>
+      )}
       <Button type="submit" size="lg" loading={pending} className="w-fit">Send message</Button>
     </form>
   );

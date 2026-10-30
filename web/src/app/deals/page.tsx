@@ -3,15 +3,15 @@ import Link from "next/link";
 import { EmptyState } from "@/components/EmptyState";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { product } from "@/lib/catalog";
+import { getCatalog } from "@/lib/catalog";
 import { activeDeals } from "@/lib/content";
 import { formatDate } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Deals" };
 export const revalidate = 300; // deals expire on their end date without a redeploy
 
-export default function DealsPage() {
-  const deals = activeDeals();
+export default async function DealsPage() {
+  const [cat, deals] = await Promise.all([getCatalog(), activeDeals()]);
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Deals" }]} />
@@ -22,7 +22,7 @@ export default function DealsPage() {
           Ask at the counter about in-store specials.
         </EmptyState>
       ) : deals.map((d) => {
-        const items = d.productSlugs.map(product).filter((p) => !!p);
+        const items = d.productSlugs.map(cat.product).filter((p) => !!p);
         return (
           <section key={d.id} className="mt-8" aria-labelledby={`deal-${d.id}`}>
             <h2 id={`deal-${d.id}`} className="text-3xl text-primary">{d.title}</h2>

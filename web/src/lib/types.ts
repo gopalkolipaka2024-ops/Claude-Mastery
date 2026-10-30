@@ -3,7 +3,8 @@ export type ProductImage = { src: string; alt: string; width: number; height: nu
 export type Price = {
   regularCents: number | null; // null = no price published yet
   saleCents?: number | null;
-  saleEndsAt?: string | null; // ISO date
+  saleStartsAt?: string | null; // ISO date; sale shows from this moment
+  saleEndsAt?: string | null; // ISO date; sale stops showing after this moment
 };
 
 export type ProductSummary = {

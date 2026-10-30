@@ -6,12 +6,15 @@ import { LoadMore } from "./LoadMore";
 import { SortMenu, SORT_OPTIONS, type SortValue } from "./SortMenu";
 
 type Facet = { id: string; label: string; options: { value: string; label: string; count: number }[] };
-type Params = { aisle: string[]; pack: string[]; volume: string[]; sort: string; page: number; inStock: boolean };
+const FACET_IDS = ["aisle", "brand", "pack", "volume", "country", "varietal"] as const;
+type Params = Record<(typeof FACET_IDS)[number], string[]> & { sort: string; page: number; inStock: boolean; min: number | null; max: number | null };
 
 function href(path: string, q: string | undefined, p: Params) {
   const u = new URLSearchParams();
   if (q) u.set("q", q);
-  for (const k of ["aisle", "pack", "volume"] as const) if (p[k].length) u.set(k, p[k].join(","));
+  for (const k of FACET_IDS) if (p[k].length) u.set(k, p[k].join(","));
+  if (p.min != null) u.set("min", String(p.min));
+  if (p.max != null) u.set("max", String(p.max));
   if (p.inStock) u.set("stock", "in");
   if (p.sort !== "relevance") u.set("sort", p.sort);
   if (p.page > 1) u.set("page", String(p.page));
@@ -31,12 +34,16 @@ export function useListingNav(params: Params, q?: string) {
   return { go, pending, path, params: shown };
 }
 
-const toState = (p: Params): FilterState => ({ facets: { aisle: p.aisle, pack: p.pack, volume: p.volume }, inStock: p.inStock || undefined });
-const fromState = (s: FilterState): Partial<Params> => ({ aisle: s.facets?.aisle ?? [], pack: s.facets?.pack ?? [], volume: s.facets?.volume ?? [], inStock: !!s.inStock });
+const toState = (p: Params): FilterState => ({
+  facets: Object.fromEntries(FACET_IDS.map((k) => [k, p[k]])), inStock: p.inStock || undefined, minPrice: p.min ?? undefined, maxPrice: p.max ?? undefined,
+});
+const fromState = (s: FilterState): Partial<Params> => ({
+  ...Object.fromEntries(FACET_IDS.map((k) => [k, s.facets?.[k] ?? []])), inStock: !!s.inStock, min: s.minPrice ?? null, max: s.maxPrice ?? null,
+});
 
-export function ListingFilters({ facets, params, q, total, showStock, variant }: { facets: Facet[]; params: Params; q?: string; total: number; showStock: boolean; variant: "rail" | "drawer" }) {
+export function ListingFilters({ facets, params, q, total, showStock, showPrice, variant }: { facets: Facet[]; params: Params; q?: string; total: number; showStock: boolean; showPrice: boolean; variant: "rail" | "drawer" }) {
   const { go, pending, params: shown } = useListingNav(params, q);
-  const props = { facets, value: toState(shown), onChange: (s: FilterState) => go(fromState(s)), showPrice: false, showStock };
+  const props = { facets, value: toState(shown), onChange: (s: FilterState) => go(fromState(s)), showPrice, showStock };
   return variant === "rail" ? <div aria-busy={pending || undefined}><FilterPanel {...props} /></div> : <FilterDrawer {...props} resultCount={total} loading={pending} />;
 }
 

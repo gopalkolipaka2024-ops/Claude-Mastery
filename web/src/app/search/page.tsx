@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ListingPage } from "@/components/ListingPage";
 import { EmptyState } from "@/components/EmptyState";
-import { allProducts, departments } from "@/lib/catalog";
+import { getCatalog } from "@/lib/catalog";
 import { didYouMean, searchIds } from "@/lib/search";
 import { store } from "@/config/store";
 
@@ -16,14 +16,15 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 export default async function SearchPage({ searchParams }: Props) {
   const sp = await searchParams;
   const q = String(Array.isArray(sp.q) ? sp.q[0] : sp.q ?? "").trim().slice(0, 100);
-  const all = allProducts();
+  const cat = await getCatalog();
+  const all = cat.all();
   const gameDay = /^game ?day$/i.test(q);
-  const ids = gameDay ? all.filter((p) => p.gameDay).map((p) => p.id) : q ? searchIds(q) : [];
+  const ids = gameDay ? all.filter((p) => p.gameDay).map((p) => p.id) : q ? await searchIds(q) : [];
   const order = new Map(ids.map((id, i) => [id, i]));
   const set = new Set(ids);
   const products = all.filter((p) => set.has(p.id));
-  const aisleNames = Object.fromEntries(departments().flatMap((d) => d.children.map((a) => [a.slug, a.name])));
-  const suggestion = q && !products.length ? didYouMean(q) : null;
+  const aisleNames = Object.fromEntries(cat.departments().flatMap((d) => d.children.map((a) => [a.slug, a.name])));
+  const suggestion = q && !products.length ? await didYouMean(q) : null;
   return (
     <ListingPage title={q ? `Results for “${q}”` : "Search"} crumbs={[{ label: "Home", href: "/" }, { label: "Search" }]} q={q}
       products={products} searchOrder={order} searchParams={sp} aisleNames={aisleNames}

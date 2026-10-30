@@ -2,9 +2,10 @@ import type { Price } from "@/lib/types";
 import { formatDate, formatPrice } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
-/** Sale price shows only while the sale is running; afterwards the regular price shows again. */
+/** Sale price shows only while the sale is running; before and after, the regular price shows. */
 export function isOnSale(price: Price, now = new Date()) {
   return price.saleCents != null && price.regularCents != null && price.saleCents < price.regularCents &&
+    (!price.saleStartsAt || new Date(price.saleStartsAt) <= now) &&
     (!price.saleEndsAt || new Date(price.saleEndsAt) >= now);
 }
 

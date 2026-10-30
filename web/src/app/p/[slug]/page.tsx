@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ImageGallery } from "@/components/ImageGallery";
 import { PackageArt } from "@/components/PackageArt";
@@ -9,29 +9,42 @@ import { StockBadge } from "@/components/StockBadge";
 import { ProductGrid } from "@/components/ProductGrid";
 import { StoreHours } from "@/components/StoreHours";
 import { Icon } from "@/components/Icon";
-import { aisle as getAisle, allProducts, department, product as getProduct, related } from "@/lib/catalog";
+import { getCatalog } from "@/lib/catalog";
+import { hours } from "@/lib/content";
 import { directionsUrl, store } from "@/config/store";
 
 type Props = { params: Promise<{ slug: string }> };
 
 /* Pre-render the 500 most important products; the rest render on first request and are cached. */
-export function generateStaticParams() {
-  return allProducts().slice(0, 500).map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await getCatalog()).all().slice(0, 500).map((p) => ({ slug: p.slug }));
 }
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const p = getProduct((await params).slug);
+  const p = (await getCatalog()).product((await params).slug);
   if (!p) return {};
   return { title: p.name, description: `${p.name}${p.size ? `, ${p.size}` : ""}. Available at ${store.name} in ${store.address.city}, ${store.address.region}. Call to confirm price and availability.` };
 }
 
 export default async function ProductPage({ params }: Props) {
-  const p = getProduct((await params).slug);
-  if (!p) notFound();
-  const d = department(p.dept)!, a = getAisle(p.dept, p.aisle)!;
-  const specs: [string, string | null][] = [["Department", d.name], ["Category", a.name], ["Pack", p.pack], ["Size", p.volume]];
-  const more = related(p);
+  const slug = (await params).slug;
+  const [cat, h] = await Promise.all([getCatalog(), hours()]);
+  const p = cat.product(slug);
+  if (!p) {
+    const moved = cat.redirect(slug);
+    if (moved) permanentRedirect(`/p/${moved}`);
+    notFound();
+  }
+  const d = cat.department(p.dept)!, a = cat.aisle(p.dept, p.aisle)!;
+  const specs: [string, string | null][] = [
+    ["Brand", p.brand], ["Department", d.name], ["Category", a.name], ["Pack", p.pack], ["Size", p.volume],
+    ["Varietal / style", p.varietal], ["Country", p.country], ["Region", p.region],
+    ["ABV", p.abv != null ? `${p.abv}%` : null], ["UPC", p.upc],
+  ];
+  const more = cat.related(p);
+  const fromBrand = cat.sameBrand(p);
+  const updated = p.updatedAt ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: store.timeZone }).format(new Date(p.updatedAt)) : null;
   const addr = `${store.address.street}, ${store.address.city}, ${store.address.region} ${store.address.postalCode}`;
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
@@ -47,11 +60,12 @@ export default async function ProductPage({ params }: Props) {
         </div>
         <div className="flex flex-col gap-5">
           <div>
-            <p className="text-sm font-semibold tracking-wide text-text-muted uppercase">{a.name}</p>
+            <p className="text-sm font-semibold tracking-wide text-text-muted uppercase">{p.brand ?? a.name}</p>
             <h1 className="mt-1 text-4xl text-primary sm:text-5xl">{p.name}</h1>
             {p.size && <p className="mt-2 text-lg text-text-muted">{p.size}</p>}
           </div>
           <div className="flex flex-wrap items-center gap-3"><PriceBlock price={p.price} size="lg" /><StockBadge quantity={p.quantity} /></div>
+          {updated && <p className="-mt-3 text-sm text-text-muted">Price and stock last updated {updated}</p>}
           <div className="rounded-lg border border-border bg-surface p-4">
             <p className="font-semibold">Prices and stock change often. Call to confirm before you visit.</p>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -59,7 +73,7 @@ export default async function ProductPage({ params }: Props) {
               <a href={directionsUrl()} target="_blank" rel="noopener" className="inline-flex h-12 items-center gap-2 rounded-md border border-border-input bg-surface px-5 font-semibold text-primary hover:border-primary"><Icon name="pin" size={20} />Directions</a>
             </div>
             <address className="mt-3 text-sm text-text-muted not-italic">{store.name}, {addr} · {store.phone.display}</address>
-            <div className="mt-2"><StoreHours variant="compact" week={[...store.hours]} timeZone={store.timeZone} holidays={[...store.holidayHours]} /></div>
+            <div className="mt-2"><StoreHours variant="compact" week={h.week} timeZone={h.timeZone} holidays={h.holidays} /></div>
           </div>
           <section aria-labelledby="specs-h">
             <h2 id="specs-h" className="text-2xl text-primary">Details</h2>
@@ -70,11 +84,18 @@ export default async function ProductPage({ params }: Props) {
                 ))}
               </tbody>
             </table>
+            {p.description && <p className="mt-3 max-w-prose">{p.description}</p>}
             {p.note && <p className="mt-3">{p.note}</p>}
           </section>
           {["beer", "wine", "spirits"].includes(p.dept) && <p className="text-sm text-text-muted">21+ only. Bring a valid photo ID.</p>}
         </div>
       </div>
+      {fromBrand.length > 0 && (
+        <section aria-labelledby="brand-h" className="mt-14">
+          <div className="flex items-end justify-between"><h2 id="brand-h" className="text-3xl text-primary">More from {p.brand}</h2><Link href={`/search?q=${encodeURIComponent(p.brand!)}`} className="font-semibold text-primary hover:underline">See all</Link></div>
+          <div className="mt-4"><ProductGrid products={fromBrand} priorityCount={0} /></div>
+        </section>
+      )}
       {more.length > 0 && (
         <section aria-labelledby="rel-h" className="mt-14">
           <div className="flex items-end justify-between"><h2 id="rel-h" className="text-3xl text-primary">More in {a.name}</h2><Link href={`/c/${d.slug}/${a.slug}`} className="font-semibold text-primary hover:underline">See all</Link></div>

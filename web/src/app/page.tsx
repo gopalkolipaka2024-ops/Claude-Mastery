@@ -5,15 +5,17 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { StoreHours } from "@/components/StoreHours";
 import { MapEmbed } from "@/components/MapEmbed";
 import { Icon } from "@/components/Icon";
-import { allProducts, departments, product as getProduct, productsIn } from "@/lib/catalog";
-import { activeDeals, featuredSlugs } from "@/lib/content";
+import { getCatalog } from "@/lib/catalog";
+import { activeDeals, featuredSlugs, hours } from "@/lib/content";
 import { directionsUrl, store } from "@/config/store";
 
-export default function Home() {
-  const depts = departments();
-  const deals = activeDeals();
-  const featured = featuredSlugs().map(getProduct).filter((p) => !!p);
-  const gameDay = allProducts().filter((p) => p.gameDay).slice(0, 8);
+export default async function Home() {
+  const [cat, deals, featuredList, h] = await Promise.all([getCatalog(), activeDeals(), featuredSlugs(), hours()]);
+  const depts = cat.departments();
+  const productsIn = cat.productsIn;
+  const featured = featuredList.map(cat.product).filter((p) => !!p);
+  const gameDay = cat.all().filter((p) => p.gameDay).slice(0, 8);
+  const dealProducts = deals.flatMap((d) => d.productSlugs).map(cat.product).filter((p) => !!p).slice(0, 8);
   const addr = `${store.address.street}, ${store.address.city}, ${store.address.region} ${store.address.postalCode}`;
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-14 px-4 py-6">
@@ -25,6 +27,7 @@ export default function Home() {
       {deals.length > 0 && (
         <section aria-labelledby="deals-h">
           <div className="flex items-end justify-between"><h2 id="deals-h" className="text-4xl text-primary">This week&apos;s deals</h2><Link href="/deals" className="font-semibold text-primary hover:underline">All deals</Link></div>
+          {dealProducts.length > 0 && <div className="mt-4"><ProductGrid products={dealProducts} /></div>}
         </section>
       )}
 
@@ -70,7 +73,7 @@ export default function Home() {
             <a href={`tel:${store.phone.e164}`} className="inline-flex h-11 items-center gap-2 rounded-md bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover"><Icon name="phone" size={18} />Call {store.phone.display}</a>
             <a href={directionsUrl()} target="_blank" rel="noopener" className="inline-flex h-11 items-center gap-2 rounded-md border border-border-input bg-surface px-4 font-semibold text-primary hover:border-primary"><Icon name="pin" size={18} />Directions</a>
           </div>
-          <StoreHours week={[...store.hours]} timeZone={store.timeZone} holidays={[...store.holidayHours]} />
+          <StoreHours week={h.week} timeZone={h.timeZone} holidays={h.holidays} />
         </div>
         <MapEmbed query={`${store.name}, ${addr}`} title={`Map to ${store.name}`} directionsHref={directionsUrl()} address={addr} />
       </section>
