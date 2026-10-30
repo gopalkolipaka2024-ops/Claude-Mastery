@@ -17,6 +17,8 @@ Backend setup and operations: [`docs/backend.md`](docs/backend.md). Environment 
 | `npm run db:start` / `npm run db:migrate` / `npm run sync` | Local Postgres, apply migrations, full catalog sync (see docs/backend.md) |
 | `npm test` | Unit and integration tests (set `TEST_DATABASE_ADMIN_URL` for the sync tests) |
 | `npm run catalog:import` | Rebuilds `src/data/catalog.json` from `../catalog.js` (the cleaned Bottle POS export) |
+| `npm run build && npm start -- -p 3100`, then `npm run budget:js` | First-load JavaScript per key route (gzip), fails over 150 KB |
+| `npm run build && npm run lhci` | Lighthouse CI on Home, Category, Search, Product: median of 5 mobile runs against the budgets in `lighthouserc.cjs` (see docs/performance.md) |
 | `npm run build && npm start`, then `npm run test:pages` | Browser checks of every page type on desktop and phone: axe, age gate, filters + Back, load more, autocomplete |
 
 ## Pages

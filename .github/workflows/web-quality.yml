@@ -1,0 +1,62 @@
+name: Web quality
+
+# Runs on every pull request that touches the site, and on pushes to main.
+# Fails the check when the site breaks a budget from the performance spec:
+#   - first-load JavaScript over 150 KB (gzip) on Home, Category, Search or Product
+#   - Lighthouse (mobile, simulated slow 4G, median of 5 runs) under 95 on Performance,
+#     Accessibility, Best Practices or SEO, LCP over 2.5 s, CLS over 0.1, or TBT over 200 ms
+# Lighthouse reports are kept as a workflow artifact for 14 days.
+on:
+  pull_request:
+    paths: ["web/**", ".github/workflows/web-quality.yml"]
+  push:
+    branches: [main]
+    paths: ["web/**", ".github/workflows/web-quality.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: web
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      SITE_INDEXABLE: "1" # build as production would be, so SEO is measured with indexing on
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Color contrast of design tokens
+        run: npm run tokens:check
+      - name: Build
+        run: npm run build
+      - name: Lighthouse budgets
+        run: npm run lhci
+      - name: First-load JavaScript budget
+        run: |
+          npm run start -- -p 3100 > /tmp/next.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3100/ && break; sleep 1; done
+          npm run budget:js
+      - name: Keep Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: web/.lighthouseci
+          retention-days: 14
