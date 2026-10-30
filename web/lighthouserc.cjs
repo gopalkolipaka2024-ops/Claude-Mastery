@@ -4,8 +4,8 @@
 const PAGES = ["/", "/c/beer", "/search?q=coors", "/p/coors-light-30-pk"];
 const base = "http://localhost:3100";
 
-// Judge the median run, not the best one (Lighthouse CI's default).
-const median = (rule) => [rule[0], { ...rule[1], aggregationMethod: "median-run" }];
+// Judge each value by its median across runs, not the best run (Lighthouse CI's default).
+const median = (rule) => [rule[0], { ...rule[1], aggregationMethod: "median" }];
 const budgets = Object.fromEntries(Object.entries({
   "categories:performance": ["error", { minScore: 0.95 }],
   "categories:accessibility": ["error", { minScore: 0.95 }],

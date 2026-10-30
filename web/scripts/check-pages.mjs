@@ -18,7 +18,27 @@ async function audit(page, label) {
   await page.addScriptTag({ content: axe });
   const v = await page.evaluate(async () => (await window.axe.run(document, { runOnly: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa", "best-practice"] })).violations.map((x) => `${x.impact}: ${x.id} (${x.nodes.length}) ${x.nodes[0]?.target?.join(" ")}`));
   if (v.length) fail(`${label} axe:\n   ${v.join("\n   ")}`); else console.log("pass", label, "axe");
+  if (label.includes("age gate")) return;
+  // SEO basics: one h1, headings never skip a level, a canonical URL, a unique title, valid JSON-LD
+  const seo = await page.evaluate(() => ({
+    levels: [...document.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((h) => +h.tagName[1]),
+    h1: document.querySelectorAll("h1").length,
+    canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href") ?? null,
+    title: document.title,
+    ld: [...document.querySelectorAll('script[type="application/ld+json"]')].map((x) => { try { return JSON.parse(x.textContent)["@type"]; } catch { return "INVALID"; } }),
+  }));
+  const skip = seo.levels.findIndex((l, i) => i > 0 && l > seo.levels[i - 1] + 1);
+  const problems = [
+    seo.h1 !== 1 && `${seo.h1} h1 elements`,
+    skip > 0 && `heading jumps h${seo.levels[skip - 1]}→h${seo.levels[skip]}`,
+    !seo.canonical && !label.includes("404") && "no canonical",
+    seo.ld.includes("INVALID") && "invalid JSON-LD",
+    titles.has(seo.title) && titles.get(seo.title) !== label.split(" ").slice(1).join(" ") && `title also used by ${titles.get(seo.title)}`,
+  ].filter(Boolean);
+  titles.set(seo.title, label.split(" ").slice(1).join(" "));
+  if (problems.length) fail(`${label} seo: ${problems.join("; ")}`); else console.log("pass", label, "seo", seo.ld.length ? `(${seo.ld.join(", ")})` : "");
 }
+const titles = new Map();
 
 for (const [w, h, name] of [[1366, 900, "desktop"], [390, 844, "mobile"]]) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h } });

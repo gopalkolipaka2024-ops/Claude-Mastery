@@ -30,6 +30,7 @@ jobs:
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       SITE_INDEXABLE: "1" # build as production would be, so SEO is measured with indexing on
+      SITE_URL: http://localhost:3100 # canonical URLs must point at the server Lighthouse tests
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
