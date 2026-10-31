@@ -1,0 +1,34 @@
+name: Uptime
+
+# Backup uptime check from GitHub (free): every 15 minutes, GET <SITE_URL>/api/health and fail
+# unless it answers {"status":"ok"}. A failed run emails the repo owner. GitHub may delay
+# scheduled runs by several minutes, so use a dedicated monitor (UptimeRobot or Better Stack,
+# free plans) as the primary alert; see web/docs/observability.md.
+# Setup: repository secret SITE_URL (e.g. https://www.example.com). Skipped until it's set.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      SITE_URL: ${{ secrets.SITE_URL }}
+    steps:
+      - name: Check /api/health
+        run: |
+          if [ -z "$SITE_URL" ]; then echo "SITE_URL secret not set; skipping."; exit 0; fi
+          for attempt in 1 2 3; do
+            body=$(curl -sS --max-time 20 -w '\n%{http_code}' "$SITE_URL/api/health") || body=$'\n000'
+            code=$(echo "$body" | tail -1); json=$(echo "$body" | sed '$d')
+            echo "attempt $attempt: HTTP $code $json"
+            if [ "$code" = "200" ] && echo "$json" | grep -q '"status":"ok"'; then exit 0; fi
+            sleep 20
+          done
+          echo "::error::Site health check failed: HTTP $code $json"
+          exit 1

@@ -2,7 +2,8 @@ name: Catalog sync
 
 # Nightly full resync from the point of sale into the database, as a safety net behind the
 # live webhook. Free on GitHub Actions. A failed run marks this workflow red and GitHub emails
-# the repo owner. Setup: repository secrets DATABASE_URL_WRITE, SITE_URL, REVALIDATE_TOKEN.
+# the repo owner; with SENTRY_DSN set it is also reported to Sentry. Logs are JSON lines.
+# Setup: repository secrets DATABASE_URL_WRITE, SITE_URL, REVALIDATE_TOKEN (and optionally SENTRY_DSN).
 # Until Bottle POS provides a feed, it re-applies the cleaned export (no-op when nothing changed).
 on:
   workflow_dispatch:
@@ -25,6 +26,7 @@ jobs:
       DATABASE_URL_WRITE: ${{ secrets.DATABASE_URL_WRITE }}
       SITE_URL: ${{ secrets.SITE_URL }}
       REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }} # failures also become Sentry alerts (optional)
     steps:
       - uses: actions/checkout@v4
       - name: Skip until the database is configured

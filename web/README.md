@@ -15,12 +15,13 @@ Backend setup and operations: [`docs/backend.md`](docs/backend.md). Environment 
 | `npm run storybook` | Component library at http://localhost:6006 |
 | `npm run build-storybook && npm run test:a11y` | Builds Storybook and runs axe on every story (fails on any violation or broken story) |
 | `npm run db:start` / `npm run db:migrate` / `npm run sync` | Local Postgres, apply migrations, full catalog sync (see docs/backend.md) |
-| `npm test` | Unit and integration tests (set `TEST_DATABASE_ADMIN_URL` for the sync tests) |
+| `npm test` | Unit and integration tests (set `TEST_DATABASE_ADMIN_URL` for the database tests) |
 | `npm run catalog:import` | Rebuilds `src/data/catalog.json` from `../catalog.js` (the cleaned Bottle POS export) |
 | `npm run build && npm start -- -p 3100`, then `npm run budget:js` | First-load JavaScript per key route (gzip), fails over 150 KB |
 | `npm run build && npm run lhci` | Lighthouse CI on Home, Category, Search, Product: median of 5 mobile runs against the budgets in `lighthouserc.cjs` (see docs/performance.md) |
 | `npm run build && npm start`, then `npm run test:pages` | Browser checks of every page type on desktop and phone: axe, headings, canonical, unique titles, JSON-LD, age gate, filters + Back, load more, autocomplete (SEO details: docs/seo.md) |
 | `npm run build && npm start`, then `npm run test:keyboard` | Keyboard and interaction checks: skip link, visible focus, dialog focus traps, 44px tap targets, 320px reflow, reduced motion (see docs/accessibility.md) |
+| `npm run build && npm run test:e2e` | Playwright end-to-end journeys and visual regression, desktop and phone (see docs/observability.md) |
 
 ## Pages
 
