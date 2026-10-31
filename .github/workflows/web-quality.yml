@@ -3,10 +3,12 @@ name: Web quality
 # Runs on every pull request that touches the site, and on pushes to main.
 # Fails the check when the site breaks a budget from the performance spec:
 #   - first-load JavaScript over 150 KB (gzip) on Home, Category, Search or Product
+#   - lint or type errors
 #   - unit or integration tests (integration tests use a throwaway Postgres service)
 #   - Lighthouse (mobile, simulated slow 4G, median of 7 runs) under 95 on Performance,
 #     Accessibility, Best Practices or SEO, LCP over 2.5 s, CLS over 0.1, or TBT over 200 ms
 #   - a server secret in any file sent to browsers
+#   - a Cloudflare Worker bundle over the free plan's 3 MB (compressed)
 #   - any accessibility failure: axe on every page and Storybook story, plus keyboard checks
 #     (skip link, visible focus, dialog focus traps, 44px tap targets, 320px reflow)
 #   - end-to-end journeys (age gate, search, filters, product page, contact form) or a visual
@@ -60,6 +62,8 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
+      - name: Lint
+        run: npm run lint
       - name: Typecheck
         run: npm run typecheck
       - name: Unit and integration tests
@@ -106,6 +110,13 @@ jobs:
         run: npm run test:e2e -- ${{ inputs.update_snapshots && '--update-snapshots' || '' }}
       - name: Storybook accessibility (axe on every story)
         run: npm run build-storybook && npm run test:a11y
+      - name: Cloudflare build fits the Workers free plan (3 MB compressed)
+        run: |
+          npx opennextjs-cloudflare build
+          npx wrangler deploy --dry-run --outdir /tmp/cf-dry 2>&1 | tee /tmp/cf-dry.log
+          kib=$(grep -oE 'gzip: [0-9.]+ KiB' /tmp/cf-dry.log | grep -oE '[0-9.]+')
+          echo "Worker size: ${kib} KiB compressed (limit 3072)"
+          awk -v k="$kib" 'BEGIN { exit (k == "" || k > 3000) }' || { echo "::error::Worker is ${kib} KiB compressed; the free plan allows 3,072 KiB."; exit 1; }
       - name: Keep the end-to-end report (failures include traces and image diffs)
         if: failure()
         uses: actions/upload-artifact@v4

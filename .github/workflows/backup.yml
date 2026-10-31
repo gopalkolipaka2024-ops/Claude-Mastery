@@ -1,0 +1,43 @@
+name: Database backup
+
+# Weekly encrypted backup of the production database, kept 90 days as a workflow artifact.
+# This is in addition to Neon's own point-in-time restore (see web/docs/runbook.md, "Restore").
+# Setup (production environment): secret DATABASE_URL_OWNER, and secret BACKUP_PASSPHRASE
+# (a long random string, stored in your password manager: without it a backup can't be opened).
+# Skipped until both are set.
+on:
+  schedule:
+    - cron: "17 9 * * 0" # Sundays, 4:17 / 5:17 am Boston time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    env:
+      DATABASE_URL_OWNER: ${{ secrets.DATABASE_URL_OWNER }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      - name: Skip until configured
+        id: gate
+        run: if [ -z "$DATABASE_URL_OWNER" ] || [ -z "$BACKUP_PASSPHRASE" ]; then echo "Backup secrets not set; skipping."; echo "go=false" >> "$GITHUB_OUTPUT"; else echo "go=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Dump and encrypt
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          stamp=$(date -u +%Y-%m-%dT%H%MZ)
+          docker run --rm -e PGURL="$DATABASE_URL_OWNER" postgres:17 sh -c 'pg_dump --format=custom --no-owner --no-privileges "$PGURL"' > db.dump
+          test -s db.dump
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$BACKUP_PASSPHRASE" --symmetric --cipher-algo AES256 -o "adams-shore-$stamp.dump.gpg" db.dump
+          rm db.dump
+          ls -la *.gpg
+      - name: Keep the backup
+        if: steps.gate.outputs.go == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup
+          path: "*.dump.gpg"
+          retention-days: 90

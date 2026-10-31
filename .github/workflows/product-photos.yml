@@ -5,11 +5,12 @@ name: Product photos
 # removes the background with the open-source rembg model, centers it on white like
 # a delivery-app listing, rebuilds the photo sheets and the site in docs/, and commits
 # the result. Cleaned photos are cached between runs, so later runs only process new
-# products. Runs weekly; start it any time from the Actions tab.
+# products.
+# Legacy: belongs to the original single-page prototype (src/store.html), whose Open Food Facts
+# photos were rejected. The new site (web/) draws packages instead. Manual-only, so it no longer
+# commits to the repository every week.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "17 7 * * 1"
 
 permissions:
   contents: write
