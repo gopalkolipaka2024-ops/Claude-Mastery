@@ -6,7 +6,7 @@ export const metadata: Metadata = pageMeta({ title: "Drink responsibly", path: "
 export default function Page() {
   return (
     <LegalPage title="Drink responsibly">
-      <p>You must be 21 or older to buy alcohol. We check a valid photo ID for every alcohol purchase.</p>
+      <p>You must be 21 or older to buy alcohol. Bring a valid photo ID, such as a driver&apos;s license, Massachusetts Liquor ID or passport.</p>
       <ul>
         <li>Never drink and drive. Plan a ride before you go out.</li>
         <li>Don&apos;t buy alcohol for anyone under 21.</li>

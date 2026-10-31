@@ -31,7 +31,7 @@ const acc = (disabled?: boolean) => () => (
   <div className="max-w-md"><Accordion>
     <AccordionItem title="Parking" defaultOpen>Parking details will come from the store.</AccordionItem>
     <AccordionItem title="Holiday hours">Holiday hours will come from the store.</AccordionItem>
-    <AccordionItem title="Delivery" disabled={disabled}>Delivery through DoorDash and Uber Eats.</AccordionItem>
+    <AccordionItem title="More details" disabled={disabled}>Example panel content.</AccordionItem>
   </Accordion></div>
 );
 export const AccordionDefault: StoryObj = { name: "Accordion", render: acc() };
