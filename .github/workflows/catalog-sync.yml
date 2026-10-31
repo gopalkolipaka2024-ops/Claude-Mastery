@@ -28,7 +28,7 @@ jobs:
       REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }} # failures also become Sentry alerts (optional)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Skip until the database is configured
         id: gate
         run: |
