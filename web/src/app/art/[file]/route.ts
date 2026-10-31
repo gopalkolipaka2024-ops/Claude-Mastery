@@ -3,6 +3,7 @@ import { getCatalog } from "@/lib/catalog";
 import { artUrl } from "@/lib/art-url";
 import { standaloneArt } from "@/lib/package-art-svg";
 import { apiError } from "@/lib/api";
+import { onCloudflare } from "@/lib/runtime";
 
 /* Package drawings as standalone SVG files, so listing pages stay small and browsers/CDN
    cache each drawing once. The URL carries a hash of the drawing's inputs, so it can be
@@ -15,8 +16,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ file: s
   const current = artUrl(p.art);
   if (!current.endsWith(`/${(await params).file}`)) return Response.redirect(new URL(current, _req.url), 301);
   const svg = Buffer.from(standaloneArt(p.art));
-  // Compressed here because the Node server doesn't compress route responses (drawings shrink ~4x)
-  const accept = _req.headers.get("accept-encoding") ?? "";
+  // The Node server doesn't compress route responses, so do it here (drawings shrink ~4x).
+  // Cloudflare compresses at the edge and would mislabel a pre-compressed body, so skip it there.
+  const accept = onCloudflare() ? "" : _req.headers.get("accept-encoding") ?? "";
   const [body, encoding] = /\bbr\b/.test(accept) ? [brotliCompressSync(svg, { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } }), "br"]
     : /\bgzip\b/.test(accept) ? [gzipSync(svg), "gzip"] : [svg, null];
   return new Response(new Uint8Array(body), {

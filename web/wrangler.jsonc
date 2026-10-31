@@ -1,0 +1,37 @@
+// Cloudflare Workers configuration.
+// The top level is STAGING, so a plain `wrangler deploy` can never reach the live site.
+// Production is `--env production` and only the "Deploy" workflow's production job uses it
+// (manual, with approval). Pull-request previews are versions of the staging worker.
+// Create the R2 buckets and D1 databases once with scripts/cloudflare-setup.sh, then paste the
+// D1 ids below. Secrets (database URLs, tokens) are set with `wrangler secret put`, never here.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "adams-shore-staging",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "adams-shore-staging" }],
+  "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "adams-shore-staging-cache" }],
+  "d1_databases": [{ "binding": "NEXT_TAG_CACHE_D1", "database_name": "adams-shore-staging-tags", "database_id": "00000000-0000-0000-0000-000000000000" }],
+  "durable_objects": { "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }],
+  "images": { "binding": "IMAGES" },
+  "vars": { "SENTRY_ENVIRONMENT": "staging", "LOG_SERVICE": "web" },
+
+  "env": {
+    "production": {
+      "name": "adams-shore",
+      "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "adams-shore" }],
+      "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "adams-shore-cache" }],
+      "d1_databases": [{ "binding": "NEXT_TAG_CACHE_D1", "database_name": "adams-shore-tags", "database_id": "00000000-0000-0000-0000-000000000000" }],
+      "durable_objects": { "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }] },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }],
+      "images": { "binding": "IMAGES" },
+      "vars": { "SENTRY_ENVIRONMENT": "production", "LOG_SERVICE": "web" },
+      // Custom domain: add when the domain is on Cloudflare (both names; the site redirects www)
+      // "routes": [{ "pattern": "example.com", "custom_domain": true }, { "pattern": "www.example.com", "custom_domain": true }]
+    }
+  }
+}

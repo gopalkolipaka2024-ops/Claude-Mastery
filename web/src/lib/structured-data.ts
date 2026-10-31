@@ -30,7 +30,7 @@ export function storeLd({ week, holidays }: { week: DayHours[]; holidays: Holida
     "@id": STORE_ID(),
     name: store.name,
     url: absolute("/"),
-    image: absolute("/opengraph-image"),
+    image: absolute("/opengraph-image.png"),
     telephone: store.phone.e164,
     ...(store.email ? { email: store.email } : {}),
     address: { "@type": "PostalAddress", streetAddress: a.street, addressLocality: a.city, addressRegion: a.region, postalCode: a.postalCode, addressCountry: a.country },
@@ -65,7 +65,7 @@ export function productLd(p: Product, now = new Date()) {
     url: absolute(`/p/${p.slug}`),
     sku: String(p.id),
     ...(gtin ? { gtin } : {}),
-    image: p.image ? absolute(p.image.src) : absolute(`/p/${p.slug}/opengraph-image/card`),
+    ...(p.image ? { image: absolute(p.image.src) } : {}), // never a generic picture standing in for the product
     ...(p.description ? { description: p.description } : {}),
     ...(p.brand ? { brand: { "@type": "Brand", name: p.brand } } : {}),
     category: p.category,

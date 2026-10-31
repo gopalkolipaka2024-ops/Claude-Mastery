@@ -1,11 +1,13 @@
 import "server-only";
-import data from "@/data/catalog.json";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { hasDatabase } from "@/db/client";
 import type { Price, ProductImage } from "./types";
 
 /*
   Catalog access for every page and API. One in-memory snapshot of the active catalog,
-  loaded from Postgres when DATABASE_URL is set (otherwise from src/data/catalog.json).
+  loaded from Postgres when DATABASE_URL is set (otherwise from src/data/catalog.json, read from
+  disk so the 2 MB file isn't bundled into the Cloudflare Worker, which always has a database).
   The snapshot reloads when the database's catalog version changes (a one-row check, at most
   every 2 seconds), or immediately after a sync/admin change in this process. It lives on
   globalThis because Next.js bundles each route separately; one shared copy per process means
@@ -26,11 +28,13 @@ export type Department = { slug: string; name: string; count: number; children: 
 export type Snapshot = { version: number; source: string; products: Product[]; departments: Department[]; redirects: Map<string, string> };
 
 /* ---------- JSON source (no database configured) ---------- */
+type RawProduct = { id: number; slug: string; name: string; rank: number; dept: string; aisle: string; pack: string | null; volume: string | null; gameDay: boolean; note?: string; art: Omit<ArtInput, "id" | "name"> };
+type RawCatalog = { source: string; categories: Department[]; products: RawProduct[] };
 let jsonSnap: Snapshot | null = null;
 function fromJson(): Snapshot {
   if (jsonSnap) return jsonSnap;
-  type Raw = (typeof data)["products"][number] & { note?: string };
-  const products: Product[] = (data.products as Raw[]).map((r) => ({
+  const data = JSON.parse(readFileSync(join(process.cwd(), "src/data/catalog.json"), "utf8")) as RawCatalog;
+  const products: Product[] = data.products.map((r) => ({
     id: r.id, slug: r.slug, name: r.name, rank: r.rank, dept: r.dept, aisle: r.aisle, category: r.art.aisle,
     brand: null, size: [r.pack, r.volume].filter(Boolean).join(", ") || null, pack: r.pack, volume: r.volume, upc: null,
     price: { regularCents: null }, quantity: null, image: null,
