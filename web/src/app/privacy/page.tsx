@@ -11,9 +11,11 @@ export default function Page() {
       <ul>
         <li><strong>Age confirmation:</strong> a small cookie remembers that you confirmed you are 21 or older, for up to a year.</li>
         <li><strong>Recent searches:</strong> kept only in your browser on this device. We never receive them.</li>
-        <li><strong>Contact form:</strong> your name, email and message, used only to reply to you.</li>
-        <li><strong>Visit statistics:</strong> counted without cookies or personal identifiers, to see which pages are used.</li>
+        <li><strong>Contact form:</strong> your name, email and message, used only to reply to you. Cloudflare Turnstile checks that the form is sent by a person, not a bot, and our email provider (Resend) delivers the message to us.</li>
+        <li><strong>Visit statistics:</strong> counted by Cloudflare Web Analytics without cookies or personal identifiers, to see which pages are used.</li>
       </ul>
+      <h2>Cookies</h2>
+      <p>The only cookie is the age confirmation above. There are no advertising or tracking cookies.</p>
       <h2>What we don&apos;t do</h2>
       <p>We don&apos;t sell your information, run advertising trackers, or share your messages with anyone except the services that deliver them to us.</p>
       <h2>Maps</h2>

@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { AgeGate } from "@/components/AgeGateLoader";
 import { AnnouncementBar } from "@/components/Banner";
 import { PackageArtDefs } from "@/components/PackageArtDefs";
+import { Analytics } from "@/components/Analytics";
 import { getCatalog } from "@/lib/catalog";
 import { announcements, hours } from "@/lib/content";
 import { directionsUrl, store } from "@/config/store";
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main id="main" tabIndex={-1} className="flex-1 outline-none">{children}</main>
         <Footer name={store.name} address={store.address} phone={store.phone} email={store.email} week={h.week} directionsHref={directionsUrl()} />
         <AgeGate storeName={store.name} />
+        <Analytics />
       </body>
     </html>
   );
