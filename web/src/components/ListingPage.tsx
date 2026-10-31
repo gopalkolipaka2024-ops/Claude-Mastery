@@ -23,7 +23,8 @@ export function ListingPage({ title, crumbs, path, products, searchParams, aisle
   const cap = capabilities(products);
   const params = parseParams(searchParams, cap.sorts);
   const { total, shown, facets } = runListing(products, params, aisleNames, { searchOrder });
-  const filterProps = { facets, params, path, q, showStock: cap.stock, showPrice: cap.priced };
+  // One element used in both the desktop rail and the phone sheet, so it is sent to the browser once
+  const filters = <FilterLinks facets={facets} params={params} path={path} q={q} showStock={cap.stock} showPrice={cap.priced} />;
   const active = FACET_IDS.reduce((n, f) => n + params[f].length, 0) + (params.inStock ? 1 : 0) + (params.min != null || params.max != null ? 1 : 0);
   const sortHrefs = Object.fromEntries(cap.sorts.map((s) => [s, listingHref(path, params, q, { sort: s })]));
   const remaining = total - shown.length;
@@ -37,7 +38,7 @@ export function ListingPage({ title, crumbs, path, products, searchParams, aisle
       <div className="mt-6 grid gap-8 lg:grid-cols-[260px_1fr]">
         <aside className="hidden lg:block" aria-label="Filters">
           <div className="sticky top-44 max-h-[calc(100dvh-12rem)] overflow-y-auto pr-2">
-            <FilterLinks {...filterProps} />
+            {filters}
           </div>
         </aside>
         <div className="min-w-0">
@@ -45,7 +46,7 @@ export function ListingPage({ title, crumbs, path, products, searchParams, aisle
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-text-muted" aria-live="polite">{total.toLocaleString()} {total === 1 ? "product" : "products"}</p>
             <div className="flex items-center gap-2">
-              <div className="lg:hidden"><ListingSheet active={active} total={total}><FilterLinks {...filterProps} showTitle={false} /></ListingSheet></div>
+              <div className="lg:hidden"><ListingSheet active={active} total={total}><div className="[&_.filter-head:not(:has(a))]:hidden [&_.filter-title]:hidden">{filters}</div></ListingSheet></div>
               {cap.sorts.length > 1 && <SortSelect value={params.sort} options={cap.sorts.map((s) => ({ value: s, label: SORT_LABELS[s] }))} hrefs={sortHrefs} />}
             </div>
           </div>

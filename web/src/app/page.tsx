@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { HeroBanner } from "@/components/Banner";
 import { artUrl } from "@/lib/art-url";
-import { PackageArt } from "@/components/PackageArt";
 import { ProductGrid } from "@/components/ProductGrid";
 import { StoreHours } from "@/components/StoreHours";
 import { MapEmbed } from "@/components/MapEmbed";
@@ -33,7 +32,7 @@ export default async function Home() {
       <HeroBanner as="h1" eyebrow={`${store.address.street.replace(/ #.*/, "")}, ${store.address.city}`} title="Cold beer. Fresh deli. One stop."
         body={`Beer, wine, spirits, deli and groceries under one roof for ${store.neighborhoods.slice(0, -1).join(", ")} and ${store.neighborhoods.at(-1)}. See what we carry, then stop in or call.`}
         cta={{ label: "Shop beer & seltzers", href: "/c/beer" }}
-        image={<div className="absolute inset-0 grid grid-cols-3 items-end gap-2">{productsIn("beer").slice(0, 3).map((p) => <div key={p.id} className="h-48"><PackageArt art={p.art} /></div>)}</div>} />
+        image={<div className="absolute inset-0 grid grid-cols-3 items-end gap-2">{productsIn("beer").slice(0, 3).map((p) => <div key={p.id} className="h-48"><img src={artUrl(p.art)} alt="" width={160} height={160} decoding="async" className="h-full w-full object-contain" /></div>)}</div>} />
 
       {deals.length > 0 && (
         <section aria-labelledby="deals-h">

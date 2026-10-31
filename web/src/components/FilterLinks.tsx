@@ -36,19 +36,18 @@ function Option({ href, on, label, count }: { href?: string; on: boolean; label:
   );
 }
 
-export function FilterLinks({ facets, params, path, q, showStock, showPrice, showTitle = true }: {
-  facets: FacetOut[]; params: ListingParams; path: string; q?: string; showStock: boolean; showPrice: boolean; showTitle?: boolean;
+export function FilterLinks({ facets, params, path, q, showStock, showPrice }: {
+  facets: FacetOut[]; params: ListingParams; path: string; q?: string; showStock: boolean; showPrice: boolean;
 }) {
   const active = FACET_IDS.reduce((n, f) => n + params[f].length, 0) + (params.inStock ? 1 : 0) + (params.min != null || params.max != null ? 1 : 0);
   const toggle = (id: FacetOut["id"], v: string) => listingHref(path, params, q, { [id]: params[id].includes(v) ? params[id].filter((x) => x !== v) : [...params[id], v] });
   return (
     <div className="flex flex-col">
-      {(showTitle || active > 0) && (
-        <div className="flex min-h-11 items-center justify-between pb-2">
-          {showTitle ? <h2 className="text-2xl text-primary">Filter</h2> : <span />}
-          {active > 0 && <Link href={listingHref(path, { ...params, aisle: [], brand: [], pack: [], volume: [], country: [], varietal: [], inStock: false, min: null, max: null }, q, {})} scroll={false} prefetch={false} className="flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-2 hover:underline">Clear all ({active})</Link>}
-        </div>
-      )}
+      {/* The mobile sheet hides this heading (the dialog has its own) via the filter-* classes */}
+      <div className="filter-head flex min-h-11 items-center justify-between pb-2">
+        <h2 className="filter-title text-2xl text-primary">Filter</h2>
+        {active > 0 && <Link href={listingHref(path, { ...params, aisle: [], brand: [], pack: [], volume: [], country: [], varietal: [], inStock: false, min: null, max: null }, q, {})} scroll={false} prefetch={false} className="flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-2 hover:underline">Clear all ({active})</Link>}
+      </div>
       {showStock && (
         <div className="border-t border-border py-1">
           <Option href={listingHref(path, params, q, { inStock: !params.inStock })} on={params.inStock} label="In stock only" />
