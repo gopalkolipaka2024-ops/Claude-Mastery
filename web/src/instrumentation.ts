@@ -1,6 +1,6 @@
 import type { Instrumentation } from "next";
 
-/** Every uncaught server error (pages, route handlers, server actions, proxy) goes to error tracking. */
+/** Every uncaught server error (pages, route handlers, server actions) goes to error tracking. */
 export const onRequestError: Instrumentation.onRequestError = async (err, request, context) => {
   const { reportError } = await import("./lib/error-report");
   const digest = typeof err === "object" && err !== null && "digest" in err ? String(err.digest) : undefined;

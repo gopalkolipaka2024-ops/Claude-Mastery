@@ -1,5 +1,4 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import { NextResponse, type NextRequest } from "next/server";
 
 /*
   /admin sits behind Cloudflare Access (free for up to 50 users): Cloudflare signs staff in
@@ -34,15 +33,6 @@ export const adminConfigured = () =>
   !!(process.env.CF_ACCESS_TEAM_DOMAIN && process.env.CF_ACCESS_AUD && process.env.ADMIN_EMAILS);
 
 /** Proxy gate for /admin. Passes the verified email to the page as x-admin-email (overwriting any client value). */
-export async function adminGate(req: NextRequest) {
-  if (!adminConfigured()) return new NextResponse("The admin area isn't set up on this site yet.", { status: 503 });
-  const email = await adminEmail(req.headers, req.headers.get("cookie"));
-  if (!email) return new NextResponse("You need to sign in through Cloudflare Access with a staff email.", { status: 403 });
-  const headers = new Headers(req.headers);
-  headers.set("x-admin-email", email);
-  return NextResponse.next({ request: { headers } });
-}
-
 /** For server actions and admin pages: re-verify instead of trusting a header. */
 export async function requireAdmin(): Promise<string> {
   const { headers, cookies } = await import("next/headers");

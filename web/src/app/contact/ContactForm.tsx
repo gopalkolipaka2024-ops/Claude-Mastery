@@ -32,6 +32,11 @@ export function ContactForm({ phone, turnstileKey }: { phone: { display: string;
             Your message didn&apos;t go through on our side. Please try again in a minute, or call <a className="font-semibold underline" href={`tel:${phone.e164}`}>{phone.display}</a>.
           </p>
         )}
+        {state.status === "limited" && (
+          <p role="alert" className="rounded-md bg-warning-50 p-3 text-warning-700">
+            Too many messages from your connection just now. Please wait a minute and try again, or call <a className="font-semibold underline" href={`tel:${phone.e164}`}>{phone.display}</a>.
+          </p>
+        )}
         {state.status === "unavailable" && (
           <p className="rounded-md bg-warning-50 p-3 text-warning-700">
             Online messages aren&apos;t switched on yet, so this wasn&apos;t sent. Please call <a className="font-semibold underline" href={`tel:${phone.e164}`}>{phone.display}</a>.

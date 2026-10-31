@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { apiError, invalid } from "@/lib/api";
 import { reportError } from "@/lib/error-report";
+import { rateLimit } from "@/lib/rate-limit";
 
 /** POST /api/client-errors — browser errors sent by the beacon in the root layout and the error pages. */
 const body = z.object({
@@ -11,6 +12,8 @@ const body = z.object({
 });
 
 export async function POST(req: Request) {
+  const limited = rateLimit(req, "clientErrors");
+  if (limited) return limited;
   const raw = await req.text();
   if (raw.length > 8_000) return apiError(413, "too_large", "Error report too large.");
   let json: unknown;

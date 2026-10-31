@@ -1,9 +1,10 @@
 "use server";
 import { headers } from "next/headers";
 import { store } from "@/config/store";
+import { clientIp, hit } from "@/lib/rate-limit";
 
 export type ContactState = {
-  status: "idle" | "invalid" | "sent" | "unavailable" | "failed";
+  status: "idle" | "invalid" | "sent" | "unavailable" | "failed" | "limited";
   errors?: Partial<Record<"name" | "email" | "message" | "captcha", string>>;
   values?: { name: string; email: string; message: string };
 };
@@ -29,6 +30,7 @@ export async function sendContact(_prev: ContactState, form: FormData): Promise<
     message: String(form.get("message") ?? "").trim().slice(0, 2000),
   };
   if (String(form.get("website") ?? "")) return { status: "sent" }; // honeypot: bots get a fake success
+  if (hit("contact", clientIp(await headers())) != null) return { status: "limited", values };
   const errors: ContactState["errors"] = {};
   if (!values.name) errors.name = "Enter your name.";
   if (!EMAIL.test(values.email)) errors.email = "Enter an email address like name@example.com.";

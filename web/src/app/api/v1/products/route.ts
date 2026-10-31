@@ -5,6 +5,7 @@ import { searchIds } from "@/lib/search";
 import { capabilities, FACET_IDS, parseParams, runListing } from "@/lib/listing";
 import { publicProduct } from "@/lib/public-product";
 import { apiError, invalid } from "@/lib/api";
+import { rateLimit } from "@/lib/rate-limit";
 
 const query = z.object({
   q: z.string().trim().max(100).optional(),
@@ -21,6 +22,8 @@ const query = z.object({
 
 /** GET /api/v1/products — read-only product listing with the same filters as the site. */
 export async function GET(req: NextRequest) {
+  const limited = rateLimit(req, "api");
+  if (limited) return limited;
   const parsed = query.safeParse(Object.fromEntries(req.nextUrl.searchParams));
   if (!parsed.success) return invalid(parsed.error);
   const qp = parsed.data;

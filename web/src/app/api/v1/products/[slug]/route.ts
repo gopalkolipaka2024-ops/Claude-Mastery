@@ -2,9 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getCatalog } from "@/lib/catalog";
 import { publicProduct } from "@/lib/public-product";
 import { apiError } from "@/lib/api";
+import { rateLimit } from "@/lib/rate-limit";
 
 /** GET /api/v1/products/:slug — one product. Renamed products answer 301 to the new slug. */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+  const limited = rateLimit(req, "api");
+  if (limited) return limited;
   const { slug } = await params;
   if (!/^[a-z0-9-]{1,200}$/.test(slug)) return apiError(400, "invalid_request", "Slug may only contain a-z, 0-9 and dashes.");
   const cat = await getCatalog();

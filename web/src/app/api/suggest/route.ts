@@ -1,8 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { suggest } from "@/lib/search";
+import { rateLimit } from "@/lib/rate-limit";
 
 /** Autocomplete suggestions. Read-only, input-validated, cached briefly at the edge. */
 export async function GET(req: NextRequest) {
+  const limited = rateLimit(req, "suggest");
+  if (limited) return limited;
   const q = (req.nextUrl.searchParams.get("q") ?? "").trim();
   if (!q) return NextResponse.json({ products: [], brands: [], categories: [] });
   if (q.length > 100) return NextResponse.json({ error: "Query too long" }, { status: 400 });
