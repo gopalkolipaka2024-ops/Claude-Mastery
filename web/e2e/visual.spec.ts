@@ -5,7 +5,7 @@ import { test, expect } from "./fixtures";
 const PAGES = [["home", "/"], ["category", "/c/beer"], ["search", "/search?q=coors"], ["product", "/p/coors-light-30-pk"], ["store", "/store"]] as const;
 
 for (const [name, path] of PAGES) {
-  test(`${name} looks right`, async ({ page }) => {
+  test(`${name} looks right @visual`, async ({ page }) => {
     await page.clock.setFixedTime(new Date("2026-11-04T15:00:00-05:00"));
     await page.goto(path);
     await page.evaluate(() => document.fonts.ready);

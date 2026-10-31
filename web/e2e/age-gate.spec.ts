@@ -6,10 +6,10 @@ test("first visit asks for age; 'No' explains, 'Yes' is remembered", async ({ pa
   await page.goto("/");
   const gate = page.getByRole("dialog", { name: "Are you 21 or older?" });
   await expect(gate).toBeVisible();
-  await page.getByRole("button", { name: "No" }).click();
+  await gate.getByRole("button", { name: "No", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Sorry" })).toContainText("You must be 21 or older");
-  await page.getByRole("button", { name: "Go back" }).click();
-  await page.getByRole("button", { name: "Yes, I'm 21+" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Go back", exact: true }).click();
+  await gate.getByRole("button", { name: "Yes, I'm 21+", exact: true }).click();
   await expect(gate).toBeHidden();
   expect((await context.cookies()).find((c) => c.name === "asm_age_ok")?.value).toBe("1");
   await page.goto("/c/beer");
