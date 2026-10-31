@@ -87,4 +87,15 @@ describe.skipIf(!adminUrl)("sync", () => {
     const bad = await db.select().from(schema.products).where(eq(schema.products.name, "Bad"));
     expect(bad).toHaveLength(0);
   });
+
+  it("refuses a full sync that would hide most of the catalog, unless told to", async () => {
+    const many = Array.from({ length: 40 }, (_, i) => item({ sku: `M${i}`, name: `Mass Test ${i} 12 oz` }));
+    await applyItems(db as never, many, { source: "test", kind: "full" });
+    // A truncated feed: only 2 of 40 items. Hiding 38 is over the limit (max 25 or 20%).
+    await expect(applyItems(db as never, many.slice(0, 2), { source: "test", kind: "full" })).rejects.toThrow(/Refusing to hide 38 of 40/);
+    const active = await db.select().from(schema.products).where(eq(schema.products.active, true));
+    expect(active).toHaveLength(40);
+    const r = await applyItems(db as never, many.slice(0, 2), { source: "test", kind: "full", allowMassDeactivate: true });
+    expect(r.deactivated).toBe(38);
+  });
 });

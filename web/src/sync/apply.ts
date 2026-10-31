@@ -17,11 +17,17 @@ const stable = (v: unknown): unknown => (v && typeof v === "object" && !Array.is
 const same = (a: unknown, b: unknown) => JSON.stringify(stable(a ?? null)) === JSON.stringify(stable(b ?? null));
 const CHUNK = 500;
 
-type Options = { source: string; kind: "full" | "webhook" };
+type Options = { source: string; kind: "full" | "webhook"; allowMassDeactivate?: boolean };
+
+/** A full sync may hide at most this share of the active catalog (and at least 25 items) in one
+    run. A truncated or empty POS export would otherwise empty the live site while reporting "ok". */
+export const MAX_DEACTIVATE_SHARE = 0.2;
 
 /**
  * Applies items from the point of sale to the database in one transaction.
  *  - full sync: every active item is in `items`; products missing from the feed are deactivated (never deleted).
+ *    If that would hide more than MAX_DEACTIVATE_SHARE of the catalog, nothing is applied and the
+ *    run fails, unless allowMassDeactivate is set (after a person has checked the feed).
  *  - webhook: `items` are partial updates matched by sku; unknown skus are created only if they carry
  *    name, department and aisle, otherwise reported back.
  * Only rows that actually changed are written. A renamed product gets a new slug and its old slug 301s.
@@ -168,6 +174,11 @@ export async function applyItems(db: Db, items: (PosItem | PosUpdate)[], opts: O
       // ---- full sync: hide what's no longer sold ----
       if (opts.kind === "full") {
         const gone = current.filter((c) => !seen.has(c.sku) && c.active).map((c) => c.productId);
+        const active = current.filter((c) => c.active).length;
+        const limit = Math.max(25, Math.floor(active * MAX_DEACTIVATE_SHARE));
+        if (gone.length > limit && !opts.allowMassDeactivate) {
+          throw new Error(`Refusing to hide ${gone.length} of ${active} products (limit ${limit}). The feed may be incomplete; nothing was changed. If this is intended, rerun with --allow-mass-deactivate.`);
+        }
         for (let i = 0; i < gone.length; i += CHUNK) {
           const ids = gone.slice(i, i + CHUNK);
           await tx.update(products).set({ active: false, updatedAt: now }).where(and(inArray(products.id, ids), eq(products.active, true)));
