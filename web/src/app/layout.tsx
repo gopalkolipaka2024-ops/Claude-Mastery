@@ -8,6 +8,7 @@ import { AgeGate } from "@/components/AgeGateLoader";
 import { AnnouncementBar } from "@/components/Banner";
 import { PackageArtDefs } from "@/components/PackageArtDefs";
 import { Analytics } from "@/components/Analytics";
+import { ERROR_BEACON_SCRIPT } from "@/lib/error-beacon";
 import { getCatalog } from "@/lib/catalog";
 import { announcements, hours } from "@/lib/content";
 import { directionsUrl, store } from "@/config/store";
@@ -31,6 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
+        <script dangerouslySetInnerHTML={{ __html: ERROR_BEACON_SCRIPT }} />
         <PackageArtDefs />
         {ann.map((a) => <AnnouncementBar key={a.id} tone={a.tone}>{a.text}</AnnouncementBar>)}
         <SiteHeader categories={nav} phone={store.phone} hours={h} />

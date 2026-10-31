@@ -6,6 +6,8 @@ import { posUpdate } from "@/sync/types";
 import { apiError, invalid, verifySignature } from "@/lib/api";
 import { revalidateChanges } from "@/lib/cache-tags";
 import { invalidateCatalog } from "@/lib/catalog";
+import { log } from "@/lib/log";
+import { reportError } from "@/lib/error-report";
 
 export const runtime = "nodejs";
 const body = z.object({ items: z.array(posUpdate).min(1).max(500) });
@@ -30,10 +32,10 @@ export async function POST(req: NextRequest) {
     const r = await applyItems(db("write"), parsed.data.items, { source: "webhook", kind: "webhook" });
     invalidateCatalog();
     revalidateChanges(r.changedSlugs, r.changedDepartments);
-    console.log(JSON.stringify({ msg: "webhook applied", runId: r.runId, created: r.created, updated: r.updated, unchanged: r.unchanged, unknown: r.unknownSkus.length }));
+    log("info", "webhook applied", { runId: r.runId, created: r.created, updated: r.updated, unchanged: r.unchanged, unknown: r.unknownSkus.length });
     return NextResponse.json({ ok: true, runId: r.runId, created: r.created, updated: r.updated, unchanged: r.unchanged, unknownSkus: r.unknownSkus });
   } catch (e) {
-    console.error(JSON.stringify({ msg: "webhook failed", error: String((e as Error).message ?? e) }));
+    await reportError(e, { source: "webhook", path: "/api/webhooks/pos", method: "POST", extra: { items: parsed.data.items.length } });
     return apiError(500, "sync_failed", "The changes couldn't be saved. Nothing was applied; retry the request.");
   }
 }

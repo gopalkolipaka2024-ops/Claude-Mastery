@@ -10,6 +10,7 @@ const LIMITS: [RegExp, number][] = [
   [/^\/api\/v1\//, 120],
   [/^\/api\/suggest/, 300],
   [/^\/contact/, 20], // form posts (server action) come in on the page URL
+  [/^\/api\/client-errors/, 30],
 ];
 const hits = new Map<string, number[]>();
 
@@ -38,4 +39,4 @@ export async function proxy(req: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/api/v1/:path*", "/api/suggest", "/contact", "/admin/:path*", "/admin"] };
+export const config = { matcher: ["/api/v1/:path*", "/api/suggest", "/api/client-errors", "/contact", "/admin/:path*", "/admin"] };
