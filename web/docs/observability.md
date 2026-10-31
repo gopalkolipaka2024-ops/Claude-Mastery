@@ -14,10 +14,11 @@
 All of these run in the **Web quality** workflow on every pull request. The integration tests
 get a throwaway Postgres service there.
 
-**After an intended visual change:** run `npm run test:e2e -- --update-snapshots` and commit
-the new images in `e2e/__screenshots__`. If GitHub's machines render slightly differently,
-run the Web quality workflow by hand with "update_snapshots" ticked, download the
-`screenshot-baselines` artifact, and commit those images instead.
+**After an intended visual change:** run the **Update screenshot baselines** workflow on your
+branch (Actions → choose the branch → Run workflow). It takes new screenshots on GitHub's
+machines and commits them; review the images in the pull request. Baselines must come from
+GitHub's machines because fonts render slightly differently on other computers (`npm run
+test:e2e -- --update-snapshots` locally is fine for trying things out, not for committing).
 
 ## Speed in the real world (field data)
 

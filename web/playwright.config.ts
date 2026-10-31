@@ -3,7 +3,7 @@ import { defineConfig } from "@playwright/test";
 /*
   End-to-end and visual regression tests against a production build.
     npm run build && npm run test:e2e          (starts the server itself on port 3100)
-    npm run test:e2e -- --update-snapshots     (after an intended visual change)
+    Screenshot baselines come from GitHub's machines: the "Update screenshot baselines" workflow.
   Screenshots are compared within 2% of pixels, so font antialiasing differences between
   machines don't fail the run but a moved or missing element does.
   Against a deployed site (preview, staging): E2E_BASE_URL=https://... npm run test:e2e -- --grep-invert @visual
