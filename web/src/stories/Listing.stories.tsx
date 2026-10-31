@@ -58,7 +58,7 @@ export const LoadMoreNoJs: StoryObj = { name: "Load more (link fallback)", rende
 export const NoResults: StoryObj = {
   render: () => (
     <EmptyState title="No matches for “corna extar”" actions={<><Button variant="secondary">Clear filters</Button><Button variant="ghost">Browse beer</Button></>}>
-      <p>Did you mean <a className="font-semibold text-primary underline" href="#">corona extra</a>? Try fewer words, or call us and we'll check the shelf.</p>
+      <p>Did you mean <a className="font-semibold text-primary underline" href="#">corona extra</a>? Try fewer words, or call us and we&apos;ll check the shelf.</p>
     </EmptyState>
   ),
 };

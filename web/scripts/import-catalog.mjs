@@ -44,7 +44,7 @@ function parseSize(size, name) {
   return [pk ? `${pk[1]} pk` : null, vol ? `${vol[1]} ${unit === "l" ? "L" : unit}` : null];
 }
 
-const categories = Object.entries(DEPT).map(([key, d]) => {
+const categories = Object.entries(DEPT).map(([_key, d]) => {
   const aisles = [...new Set(products.filter((p) => p.dept === d.slug).map((p) => p.art.aisle))];
   return {
     slug: d.slug, name: d.name,

@@ -20,7 +20,7 @@ export function MapEmbed({ query, title, directionsHref, address }: { query: str
             <div className="flex flex-col items-center gap-3">
               <span className="grid size-12 place-items-center rounded-full bg-surface text-accent-600 shadow-sm"><Icon name="pin" size={26} /></span>
               <p className="font-semibold">{address}</p>
-              {failed ? <p className="text-sm text-danger-600" role="alert">The map couldn't load. Use the directions link below.</p> : (
+              {failed ? <p className="text-sm text-danger-600" role="alert">The map couldn&apos;t load. Use the directions link below.</p> : (
                 <button type="button" onClick={() => setLoad(true)} className="min-h-11 rounded-md border border-border-input bg-surface px-4 font-semibold text-primary hover:border-primary">
                   Show map
                 </button>

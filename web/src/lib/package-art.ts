@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck -- drawing code ported as-is from the original store page; covered by visual tests
 /*
   Package drawings for products without a photo, ported from the prototype
   (src/store.html). Server-side only: returns SVG markup as a string.
@@ -8,7 +8,7 @@
 */
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const lum = hex => {const n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;return (0.299*r+0.587*g+0.114*b)/255;};
-const shade = (hex,amt) => {const n=parseInt(hex.slice(1),16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;const f=v=>Math.max(0,Math.min(255,Math.round(amt<0?v*(1+amt):v+(255-v)*amt)));return "#"+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,"0")).join("");};
+const shade = (hex,amt) => {const n=parseInt(hex.slice(1),16);const r=(n>>16)&255,g=(n>>8)&255,b=n&255;const f=v=>Math.max(0,Math.min(255,Math.round(amt<0?v*(1+amt):v+(255-v)*amt)));return "#"+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,"0")).join("");};
 
 /* ===== PRODUCT ART =====
    Every product gets a drawn package: the shape comes from what it is (can, case, wine bottle,
@@ -17,7 +17,7 @@ const shade = (hex,amt) => {const n=parseInt(hex.slice(1),16);let r=(n>>16)&255,
 
 const TWO = new Set("light lite claw adams bull croix pepper dew spring home box tail head morgan walker daniel's daniels julio goose mark royal orchard tea ice ultra moon nevada shift abby hobo squirrel artois especial extra water dazs jerry's fish kat patch mayer feast crawford marca crimes coco chips spray cola zero bud jack lagunitas sour cod ranger noon loko jack's lyte dry high life banquet modelo ballz spiked ale beer".split(" "));
 function labelOf(p){
-  let n = p.name.replace(/\s+\d[\d.,/]*\s*(?:pk|oz|ml|l|lb|ct|gal|qt|pt|yr|years?)\b.*$/i,"").replace(/\s+(?:cans?|bottles?|single|loose)$/i,"").replace(/[()]/g,"");
+  const n = p.name.replace(/\s+\d[\d.,/]*\s*(?:pk|oz|ml|l|lb|ct|gal|qt|pt|yr|years?)\b.*$/i,"").replace(/\s+(?:cans?|bottles?|single|loose)$/i,"").replace(/[()]/g,"");
   const w = n.split(/\s+/).filter(Boolean);
   let i = 1, brand = w[0]||"";
   if(w[1] && (brand.length<=4 || TWO.has(w[1].toLowerCase())) && (brand+" "+w[1]).length<=14){brand+=" "+w[1];i=2;}
@@ -210,7 +210,7 @@ const SHAPES = {
     else s=[[40,110],[60,96],[80,110],[50,130],[72,130]].map(([x,y],i)=>`<ellipse cx="${x}" cy="${y}" rx="22" ry="14" fill="${["#4E9A2E","#5FAF3A","#3F8F2E","#6BBF45","#4E9A2E"][i]}" transform="rotate(${(i-2)*18} ${x} ${y})"/>`).join("")+`<rect x="54" y="132" width="12" height="16" fill="#7A9A4A"/>`;
     return SHADOW(40)+s;
   },
-  sandwich(p){return SHADOW(48)+subSVG(SUB_DEFAULT,false);},
+  sandwich(_p){return SHADOW(48)+subSVG(SUB_DEFAULT,false);},
   icebag(p){
     const cubes=[[40,90],[62,84],[82,96],[46,114],[70,112],[54,132],[78,132],[36,134]].map(([x,y],i)=>`<rect x="${x-9}" y="${y-9}" width="18" height="18" rx="4" fill="#fff" opacity=".85" transform="rotate(${i*17} ${x} ${y})" stroke="#A9CFE6"/>`).join("");
     return SHADOW(40)+`<path d="M26 40 Q24 34 32 34 L88 34 Q96 34 94 40 L98 140 Q98 148 90 148 L30 148 Q22 148 22 140 Z" fill="#DCEFFA" opacity=".9" stroke="#9CC9E3" stroke-width="2"/>${cubes}`+
@@ -584,7 +584,7 @@ function subSVG(s,animate){
     L.push(`<path d="M12 120 Q60 140 108 120 L104 96 Q60 112 16 96 Z" fill="#E8C690"/>`);
   } else L.push(`<path d="M10 116 Q10 128 24 130 L96 130 Q110 128 110 116 Z" fill="#C98B43"/>`);
   let y=112;
-  s.meat.forEach((m,i)=>{L.push(g(0,`<path d="M14 ${y} q10 -6 20 0 q10 -6 20 0 q10 -6 20 0 q10 -6 20 0 q6 -4 12 0 v6 h-92z" fill="${meatC[m]}"/>`));y-=6;});
+  s.meat.forEach((m,_i)=>{L.push(g(0,`<path d="M14 ${y} q10 -6 20 0 q10 -6 20 0 q10 -6 20 0 q10 -6 20 0 q6 -4 12 0 v6 h-92z" fill="${meatC[m]}"/>`));y-=6;});
   if(chC[s.cheese[0]]){L.push(g(0,`<path d="M14 ${y+2} l12 6 l12 -6 l12 6 l12 -6 l12 6 l12 -6 l12 6 l8 -4 v-6 h-92z" fill="${chC[s.cheese[0]]}"/>`));y-=6;}
   if(s.top.includes("Tomato")){L.push(g(0,[22,44,66,88].map(x=>`<ellipse cx="${x}" cy="${y+3}" rx="10" ry="3.5" fill="#D7262E"/>`).join("")));y-=4;}
   if(s.top.includes("Onion")){L.push(g(0,[30,56,82].map(x=>`<ellipse cx="${x}" cy="${y+3}" rx="9" ry="2.5" fill="none" stroke="#C99BD0" stroke-width="2"/>`).join("")));y-=3;}

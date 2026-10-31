@@ -1,22 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import type { DayHours } from "@/config/store";
 import { DAY_NAMES, openStatus, storeClock } from "@/lib/hours";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import { Icon } from "./Icon";
 
+const currentMinute = () => Math.floor(Date.now() / 60_000);
+const subscribeMinute = (cb: () => void) => { const t = setInterval(cb, 15_000); return () => clearInterval(t); };
+
 type Props = { week: DayHours[]; timeZone: string; holidays?: { date: string; label: string; hours: DayHours }[]; variant?: "compact" | "full"; now?: Date };
 
 /** "Open until 10 pm" status plus the week. Status is computed in the store's time zone and refreshes every minute. */
 export function StoreHours({ week, timeZone, holidays = [], variant = "full", now: fixedNow }: Props) {
-  const [now, setNow] = useState<Date | null>(fixedNow ?? null);
-  useEffect(() => {
-    if (fixedNow) return;
-    setNow(new Date());
-    const t = setInterval(() => setNow(new Date()), 60_000);
-    return () => clearInterval(t);
-  }, [fixedNow]);
+  // The current minute, read in the browser only (the server renders no open/closed status)
+  const minute = useSyncExternalStore(subscribeMinute, currentMinute, () => null);
+  const now = fixedNow ?? (minute == null ? null : new Date(minute * 60_000));
   const status = now ? openStatus(now, timeZone, week, holidays) : null;
   const today = now ? storeClock(now, timeZone).day : -1;
 

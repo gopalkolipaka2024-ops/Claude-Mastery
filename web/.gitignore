@@ -10,3 +10,7 @@ next-env.d.ts
 .lighthouseci/
 playwright-report/
 test-results/
+.open-next/
+.wrangler/
+.dev.vars*
+cloudflare-env.d.ts

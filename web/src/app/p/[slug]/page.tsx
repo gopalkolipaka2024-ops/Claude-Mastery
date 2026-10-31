@@ -13,7 +13,7 @@ import { getCatalog } from "@/lib/catalog";
 import { hours } from "@/lib/content";
 import { directionsUrl, store } from "@/config/store";
 import { pageMeta, sizeBeyondName } from "@/lib/seo";
-import { breadcrumbLd, productLd } from "@/lib/structured-data";
+import { productLd } from "@/lib/structured-data";
 import { JsonLd } from "@/components/JsonLd";
 
 type Props = { params: Promise<{ slug: string }> };

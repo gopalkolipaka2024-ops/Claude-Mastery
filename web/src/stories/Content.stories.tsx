@@ -18,8 +18,8 @@ const meta: Meta = { title: "Components/Content" };
 export default meta;
 
 const tabItems = [
-  { id: "details", label: "Details", content: <p>Specs appear here when the store's data includes them.</p> },
-  { id: "description", label: "Description", content: <p>Product description from the store's data.</p> },
+  { id: "details", label: "Details", content: <p>Specs appear here when the store&apos;s data includes them.</p> },
+  { id: "description", label: "Description", content: <p>Product description from the store&apos;s data.</p> },
   { id: "related", label: "Related", content: <p>Related products.</p> },
   { id: "reviews", label: "Reviews", content: null, disabled: true },
 ];
@@ -27,13 +27,13 @@ export const TabsDefault: StoryObj = { name: "Tabs", render: () => <Tabs items={
 export const TabsHover: StoryObj = { name: "Tabs (hover)", render: () => <Tabs items={tabItems} />, parameters: HOVER };
 export const TabsFocus: StoryObj = { name: "Tabs (focus-visible)", render: () => <Tabs items={tabItems} />, parameters: FOCUS };
 
-const acc = (disabled?: boolean) => () => (
+const acc = (disabled?: boolean) => function AccordionStory() { return (
   <div className="max-w-md"><Accordion>
     <AccordionItem title="Parking" defaultOpen>Parking details will come from the store.</AccordionItem>
     <AccordionItem title="Holiday hours">Holiday hours will come from the store.</AccordionItem>
     <AccordionItem title="More details" disabled={disabled}>Example panel content.</AccordionItem>
   </Accordion></div>
-);
+); };
 export const AccordionDefault: StoryObj = { name: "Accordion", render: acc() };
 export const AccordionHover: StoryObj = { name: "Accordion (hover)", render: acc(), parameters: HOVER };
 export const AccordionFocus: StoryObj = { name: "Accordion (focus-visible)", render: acc(), parameters: FOCUS };

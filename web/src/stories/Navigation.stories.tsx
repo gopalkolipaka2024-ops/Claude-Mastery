@@ -27,9 +27,9 @@ export const MegaMenuOpen: StoryObj = {
 
 export const Crumbs: StoryObj = { name: "Breadcrumbs", render: () => <div className="p-4"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Beer & Seltzers", href: "/c/beer" }, { label: "Light beer", href: "/c/beer/light-beer" }, { label: "Coors Light 30 pk" }]} /></div> };
 
-const box = (opts?: { delay?: number; fail?: boolean }, disabled?: boolean) => () => (
+const box = (opts?: { delay?: number; fail?: boolean }, disabled?: boolean) => function SearchBoxStory() { return (
   <div className="h-96 max-w-xl p-4"><SearchBox disabled={disabled} search={(q) => exampleSearch(q, opts)} onSubmit={() => {}} /></div>
-);
+); };
 export const Search: StoryObj = { render: box() };
 export const SearchHover: StoryObj = { render: box(), parameters: HOVER };
 export const SearchFocus: StoryObj = { render: box(), parameters: FOCUS };

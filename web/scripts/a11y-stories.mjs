@@ -42,7 +42,7 @@ for (const s of stories) {
   if (broken) errors.push(broken);
   await page.addScriptTag({ content: axeSource });
   const result = await page.evaluate(async () => {
-    // @ts-ignore
+    // @ts-expect-error -- axe is injected into the page above
     const r = await window.axe.run(document.querySelector("#storybook-root") ?? document.body, { runOnly: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"], rules: { region: { enabled: false } } });
     return r.violations.map((v) => `${v.impact}: ${v.id} — ${v.help} (${v.nodes.length}) e.g. ${v.nodes[0]?.target?.join(" ")}`);
   });

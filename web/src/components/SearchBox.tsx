@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/cn";
 import { Icon } from "./Icon";
 import { Spinner } from "./Spinner";
@@ -9,8 +9,18 @@ export type SuggestionGroups = { products: Suggestion[]; brands: Suggestion[]; c
 type Status = "idle" | "loading" | "ready" | "error";
 
 const RECENT_KEY = "asm:recent-searches";
-const readRecent = (): string[] => { try { return JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"); } catch { return []; } };
-const saveRecent = (q: string) => { try { localStorage.setItem(RECENT_KEY, JSON.stringify([q, ...readRecent().filter((x) => x !== q)].slice(0, 6))); } catch { /* storage blocked */ } };
+const parseRecent = (raw: string | null): string[] => { try { const v = JSON.parse(raw ?? "[]"); return Array.isArray(v) ? v : []; } catch { return []; } };
+const rawRecent = () => { try { return localStorage.getItem(RECENT_KEY); } catch { return null; } };
+const saveRecent = (q: string) => {
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify([q, ...parseRecent(rawRecent()).filter((x) => x !== q)].slice(0, 6))); } catch { /* storage blocked */ }
+  window.dispatchEvent(new Event(RECENT_KEY));
+};
+/** Recent searches live in this browser's storage; this keeps every search box in sync with it. */
+const subscribeRecent = (cb: () => void) => {
+  window.addEventListener(RECENT_KEY, cb);
+  window.addEventListener("storage", cb);
+  return () => { window.removeEventListener(RECENT_KEY, cb); window.removeEventListener("storage", cb); };
+};
 
 /**
  * WAI-ARIA combobox with grouped suggestions (products, brands, categories) and recent
@@ -23,19 +33,19 @@ export function SearchBox({ search, onSubmit, placeholder = "Search wine, beer, 
   const id = useId();
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
-  const [status, setStatus] = useState<Status>("idle");
+  const [fetchStatus, setStatus] = useState<Status>("idle");
+  const status: Status = q.trim() ? fetchStatus : "idle";
   const [groups, setGroups] = useState<SuggestionGroups>({ products: [], brands: [], categories: [] });
-  const [recent, setRecent] = useState<string[]>([]);
+  const recentRaw = useSyncExternalStore(subscribeRecent, rawRecent, () => null);
+  const recent = useMemo(() => parseRecent(recentRaw), [recentRaw]);
   const [active, setActive] = useState(-1);
   const req = useRef(0);
   const root = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setRecent(readRecent()); }, []);
   useEffect(() => {
     const term = q.trim();
-    if (!term) { setStatus("idle"); return; }
+    if (!term) return;
     const n = ++req.current;
-    setStatus("loading");
     const t = setTimeout(() => {
       search(term).then((g) => { if (n === req.current) { setGroups(g); setStatus("ready"); setActive(-1); } })
         .catch(() => { if (n === req.current) setStatus("error"); });
@@ -57,7 +67,7 @@ export function SearchBox({ search, onSubmit, placeholder = "Search wine, beer, 
 
   const submit = useCallback((term: string) => {
     const t = term.trim(); if (!t) return;
-    saveRecent(t); setRecent(readRecent()); setOpen(false); onSubmit(t);
+    saveRecent(t); setOpen(false); onSubmit(t);
   }, [onSubmit]);
   const choose = (o: (typeof options)[number]) => {
     if (!o.href) { setQ(o.label); submit(o.label); return; }
@@ -75,7 +85,7 @@ export function SearchBox({ search, onSubmit, placeholder = "Search wine, beer, 
           <input id={id} type="search" value={q} disabled={disabled} placeholder={placeholder} autoComplete="off" spellCheck={false}
             role="combobox" aria-expanded={expanded} aria-controls={expanded ? `${id}-list` : undefined} aria-autocomplete="list"
             aria-activedescendant={active >= 0 ? `${id}-opt-${active}` : undefined}
-            onChange={(e) => { setQ(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)}
+            onChange={(e) => { setQ(e.target.value); if (e.target.value.trim()) setStatus("loading"); setOpen(true); }} onFocus={() => setOpen(true)}
             onKeyDown={(e) => {
               if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true); setActive((a) => Math.min(options.length - 1, a + 1)); }
               else if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(-1, a - 1)); }
@@ -94,7 +104,7 @@ export function SearchBox({ search, onSubmit, placeholder = "Search wine, beer, 
       {expanded && (
         <div className="absolute inset-x-0 top-full z-(--z-dropdown) mt-2 max-h-[70vh] overflow-y-auto rounded-lg border border-border bg-surface p-2 shadow-lg animate-fade-in">
           {status === "error" && !showRecent ? (
-            <p id={`${id}-list`} role="alert" className="p-3 text-sm text-danger-600">Search isn't responding right now. Press Enter to search anyway.</p>
+            <p id={`${id}-list`} role="alert" className="p-3 text-sm text-danger-600">Search isn&apos;t responding right now. Press Enter to search anyway.</p>
           ) : status === "ready" && !options.length && !showRecent ? (
             <p id={`${id}-list`} className="p-3 text-sm text-text-muted">No matches for “{q.trim()}”. Try a brand, a style like “IPA”, or a size like “30 pk”.</p>
           ) : (
