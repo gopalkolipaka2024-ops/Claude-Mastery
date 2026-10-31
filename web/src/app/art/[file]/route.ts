@@ -1,3 +1,4 @@
+import { brotliCompressSync, constants, gzipSync } from "node:zlib";
 import { getCatalog } from "@/lib/catalog";
 import { artUrl } from "@/lib/art-url";
 import { standaloneArt } from "@/lib/package-art-svg";
@@ -13,6 +14,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ file: s
   if (!p) return apiError(404, "not_found", "No such product.");
   const current = artUrl(p.art);
   if (!current.endsWith(`/${(await params).file}`)) return Response.redirect(new URL(current, _req.url), 301);
-  const svg = standaloneArt(p.art);
-  return new Response(svg, { headers: { "Content-Type": "image/svg+xml; charset=utf-8", "Cache-Control": "public, max-age=31536000, immutable", "X-Content-Type-Options": "nosniff" } });
+  const svg = Buffer.from(standaloneArt(p.art));
+  // Compressed here because the Node server doesn't compress route responses (drawings shrink ~4x)
+  const accept = _req.headers.get("accept-encoding") ?? "";
+  const [body, encoding] = /\bbr\b/.test(accept) ? [brotliCompressSync(svg, { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } }), "br"]
+    : /\bgzip\b/.test(accept) ? [gzipSync(svg), "gzip"] : [svg, null];
+  return new Response(new Uint8Array(body), {
+    headers: {
+      "Content-Type": "image/svg+xml; charset=utf-8", "Cache-Control": "public, max-age=31536000, immutable", "X-Content-Type-Options": "nosniff",
+      Vary: "Accept-Encoding", ...(encoding ? { "Content-Encoding": encoding } : {}),
+    },
+  });
 }

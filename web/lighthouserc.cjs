@@ -1,4 +1,4 @@
-// Lighthouse CI: mobile emulation with simulated slow 4G (Lighthouse defaults), median of 5 runs.
+// Lighthouse CI: mobile emulation with simulated slow 4G (Lighthouse defaults), median of 7 runs.
 // Budgets from the performance spec. INP can't be measured in a page-load test; Total Blocking
 // Time is its lab stand-in (field INP is collected by real-user monitoring).
 const PAGES = ["/", "/c/beer", "/search?q=coors", "/p/coors-light-30-pk"];
@@ -22,7 +22,7 @@ module.exports = {
       startServerCommand: "npm run start -- -p 3100",
       startServerReadyPattern: "Ready",
       url: PAGES.map((p) => base + p),
-      numberOfRuns: 5,
+      numberOfRuns: 7,
       settings: { chromeFlags: "--headless=new --no-sandbox", extraHeaders: JSON.stringify({ Cookie: "asm_age_ok=1" }) },
     },
     assert: {
