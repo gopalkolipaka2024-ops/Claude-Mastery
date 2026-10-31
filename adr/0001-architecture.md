@@ -1,6 +1,6 @@
 # ADR 0001: Architecture for the Adams Shore browse-only store site
 
-Status: **Accepted** (Phase 0 approved; amended during Phase 3, see section 5)
+Status: **Accepted** (Phase 0 approved; amended during Phases 3–9, see sections 5 and 6)
 Date: 2026-10-30
 
 ## 1. What exists today (audit)
@@ -88,3 +88,30 @@ Free tiers have limits and can change; each is re-checked before launch.
 - **Caching: in-memory catalog snapshot + path revalidation instead of per-query cache tags.** At ~7,400 products, one snapshot per server process (reloaded when the database's catalog version changes, checked every 2 seconds) is simpler and faster than caching individual queries. Changes re-render the affected product pages and the home page immediately.
 - **Drivers:** reads from Neon use the HTTP driver; writes use node-postgres for transactions. Local development and tests use real Postgres via `embedded-postgres` (no Docker).
 - **Variants:** one variant per product today (each POS item is its own product); the table allows grouping sizes later without a migration.
+
+## 6. Amendments made while building (Phases 4–9)
+
+- **Hosting is Cloudflare Workers through the OpenNext adapter**, on the free plan. Pages are
+  cached in R2. On-demand refresh after a POS change uses a D1 tag cache, and timed refresh
+  uses a Durable Object queue. Verified locally in Cloudflare's runtime (workerd), including
+  webhook writes and page refresh.
+- **No Next.js middleware/proxy.** OpenNext's support for Node.js middleware is experimental,
+  so rate limits moved into the API routes and the contact action. The admin check lives in
+  the admin layout and every admin page and action, behind Cloudflare Access.
+- **Worker size budget: under 3 MB compressed** (the free plan's limit), checked in CI.
+  - The per-product generated share images were dropped: their renderer alone was ~0.6 MB.
+    The site uses one static share card, and product photos once the feed has them.
+  - The fallback JSON catalog is read from disk (Node only) rather than bundled.
+  - Restoring per-product share cards means Workers Paid ($5/month, 10 MB limit).
+- **Database connections on Workers live for one request** (Workers forbid sharing sockets
+  between requests); on Node they're pooled per process.
+- **Deploys:**
+  - each pull request gets a preview version of the staging worker;
+  - `main` deploys to staging automatically;
+  - production is manual, behind a `PRODUCTION_ENABLED` switch, a typed confirmation and a
+    reviewer, with automatic rollback when the post-deploy health check fails.
+- **Search, filters and sort** are server-rendered links; client code is limited to the
+  header, the phone filter sheet, sort, and lazily loaded dialogs (first-load JS ~145 KB).
+- **Error tracking** sends events to Sentry's HTTP API directly, with no SDK in the browser
+  bundle.
+- **Full sync safety limit:** a full sync can't hide more than 20% of the catalog in one run.

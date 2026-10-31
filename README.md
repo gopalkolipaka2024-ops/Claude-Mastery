@@ -1,4 +1,14 @@
-# Adams Shore Super Market & Liquors — online store
+# Adams Shore Super Market & Liquors
+
+**The website is in [`web/`](web/)**: a browse-only store site (Next.js on Cloudflare Workers). Start with
+[`web/README.md`](web/README.md); to run it, [`web/docs/runbook.md`](web/docs/runbook.md); architecture
+decisions are in [`adr/0001-architecture.md`](adr/0001-architecture.md).
+
+The rest of this file describes the **original prototype**: a single page with a cart and a deli
+builder, kept for reference. It is replaced by `web/`. Its photo pipeline (Open Food Facts) was
+retired; the new site draws each product's package instead.
+
+## Original prototype
 
 Storefront for 494 Sea St, Quincy: cooler, deli sandwich builder, and every product on the shelf
 with a drawn package image.

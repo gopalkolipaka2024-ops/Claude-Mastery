@@ -1,14 +1,28 @@
 # Adams Shore web (Next.js)
 
 Browse-only store site. Architecture: [`../adr/0001-architecture.md`](../adr/0001-architecture.md).
-Status: **Phase 3 (backend) done.** Database, POS sync and webhook, public API, admin and contact email.
-Backend setup and operations: [`docs/backend.md`](docs/backend.md). Environment variables: [`.env.example`](.env.example).
+Status: **built and tested, not live.** Every phase of the build is done; launching needs the owner's accounts
+and data (see [`docs/launch-checklist.md`](docs/launch-checklist.md)).
+
+| Read this | For |
+| --- | --- |
+| [`docs/runbook.md`](docs/runbook.md) | Deploy, roll back, update content, fix a failed sync, restore, first-time setup |
+| [`docs/launch-checklist.md`](docs/launch-checklist.md) | Everything to do and check before and after going live |
+| [`docs/backend.md`](docs/backend.md) | Data flow, database, POS sync, public API, admin |
+| [`docs/performance.md`](docs/performance.md) · [`docs/seo.md`](docs/seo.md) · [`docs/accessibility.md`](docs/accessibility.md) | Budgets and how each is enforced |
+| [`docs/security-and-compliance.md`](docs/security-and-compliance.md) | Headers, secrets, dependencies, privacy, alcohol rules to review |
+| [`docs/observability.md`](docs/observability.md) | Tests, error tracking, uptime, logs, alerts |
+| [`.env.example`](.env.example) | Every setting |
+
+Hosting: Cloudflare Workers via the OpenNext adapter (`wrangler.jsonc`, `open-next.config.ts`), free plan.
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Local site at http://localhost:3000 |
+| `npm run lint` | ESLint (Next.js core-web-vitals and TypeScript rules), zero warnings allowed |
+| `npx opennextjs-cloudflare build && npx opennextjs-cloudflare preview` | The Cloudflare Workers build, served locally in Cloudflare's runtime at http://localhost:8787 (put settings in `.dev.vars`) |
 | `npm run build` | Production build |
 | `npm run typecheck` | TypeScript, no emit |
 | `npm run tokens:check` | Checks every text/background token pair against WCAG 2.2 AA |
