@@ -42,7 +42,10 @@ async function focusWalk(page, label, stops = 45) {
       const ring = shows(el) || (el.parentElement?.matches(":focus-within") && shows(el.parentElement)) || (el.parentElement?.parentElement && shows(el.parentElement.parentElement)) || overlay;
       const rect = el.getBoundingClientRect();
       const header = document.querySelector("header")?.getBoundingClientRect();
-      const covered = header && getComputedStyle(document.querySelector("header")).position === "sticky" && !el.closest("header") && getComputedStyle(el).position !== "fixed" && rect.bottom <= header.bottom;
+      // Hidden under the sticky header: the topmost element at the focused element's centre is the header
+      const cx = Math.min(Math.max(rect.left + rect.width / 2, 0), innerWidth - 1), cy = Math.min(Math.max(rect.top + rect.height / 2, 0), innerHeight - 1);
+      const top = document.elementFromPoint(cx, cy);
+      const covered = header && !el.closest("header") && !!top?.closest("header") && !el.contains(top);
       return { name: `${el.tagName.toLowerCase()} "${(el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 30)}"`, ring, covered, size: rect.width * rect.height };
     });
     if (!r) return;

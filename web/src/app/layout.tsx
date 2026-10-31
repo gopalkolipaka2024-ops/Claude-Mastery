@@ -33,6 +33,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <script dangerouslySetInnerHTML={{ __html: ERROR_BEACON_SCRIPT }} />
+        {/* First thing on every page, before announcements and the header */}
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-(--z-toast) focus:rounded-md focus:bg-surface focus:px-4 focus:py-3 focus:font-semibold focus:shadow-lg">
+          Skip to content
+        </a>
         <PackageArtDefs />
         {ann.map((a) => <AnnouncementBar key={a.id} tone={a.tone}>{a.text}</AnnouncementBar>)}
         <SiteHeader categories={nav} phone={store.phone} hours={h} />

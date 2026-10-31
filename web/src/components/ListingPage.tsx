@@ -45,7 +45,7 @@ export function ListingPage({ title, crumbs, path, products, searchParams, aisle
           <h2 className="sr-only">Products</h2>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-text-muted" aria-live="polite">{total.toLocaleString()} {total === 1 ? "product" : "products"}</p>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <div className="lg:hidden"><ListingSheet active={active} total={total}><div className="[&_.filter-head:not(:has(a))]:hidden [&_.filter-title]:hidden">{filters}</div></ListingSheet></div>
               {cap.sorts.length > 1 && <SortSelect value={params.sort} options={cap.sorts.map((s) => ({ value: s, label: SORT_LABELS[s] }))} hrefs={sortHrefs} />}
             </div>

@@ -24,9 +24,6 @@ export function Header({ categories, phone, hours, search, onSearch, now }: Head
   const [menu, setMenu] = useState(false);
   return (
     <>
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-(--z-toast) focus:rounded-md focus:bg-surface focus:px-4 focus:py-3 focus:font-semibold focus:shadow-lg">
-        Skip to content
-      </a>
       <header className="sticky top-0 z-(--z-sticky) border-b-3 border-accent-600 bg-surface">
         <div className="bg-brand-800 text-neutral-0">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 text-sm">
