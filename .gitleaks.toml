@@ -1,0 +1,13 @@
+# Gitleaks: the default rules, minus known fake values used on purpose.
+title = "Adams Shore secret scanning"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake secrets: CI canaries that prove secrets stay out of browser files, and test fixtures"
+regexes = [
+  '''canary[-_a-z0-9@.]*''',
+  '''test-(secret|token)''',
+  '''postgres://owner:owner@localhost''',
+]

@@ -5,6 +5,7 @@ name: Web quality
 #   - first-load JavaScript over 150 KB (gzip) on Home, Category, Search or Product
 #   - Lighthouse (mobile, simulated slow 4G, median of 5 runs) under 95 on Performance,
 #     Accessibility, Best Practices or SEO, LCP over 2.5 s, CLS over 0.1, or TBT over 200 ms
+#   - a server secret in any file sent to browsers
 #   - any accessibility failure: axe on every page and Storybook story, plus keyboard checks
 #     (skip link, visible focus, dialog focus traps, 44px tap targets, 320px reflow)
 # Lighthouse reports are kept as a workflow artifact for 14 days.
@@ -49,6 +50,25 @@ jobs:
         run: npm run tokens:check
       - name: Build
         run: npm run build
+        env:
+          # Fake "canary" secrets: if any of these values shows up in browser files, the next step fails
+          POS_WEBHOOK_SECRET: canary-pos-0f3a9c7e
+          REVALIDATE_TOKEN: canary-reval-5b1d2e8f
+          RESEND_API_KEY: re_canary11_canary22xyz
+          TURNSTILE_SECRET_KEY: canary-turnstile-7c4e9a12
+          CF_ACCESS_AUD: canary-aud-3e8b6d0c
+          ADMIN_EMAILS: canary-admin@example.invalid
+          CONTACT_TO: canary-to@example.invalid
+      - name: No server secrets in browser files
+        run: npm run check:secrets
+        env:
+          POS_WEBHOOK_SECRET: canary-pos-0f3a9c7e
+          REVALIDATE_TOKEN: canary-reval-5b1d2e8f
+          RESEND_API_KEY: re_canary11_canary22xyz
+          TURNSTILE_SECRET_KEY: canary-turnstile-7c4e9a12
+          CF_ACCESS_AUD: canary-aud-3e8b6d0c
+          ADMIN_EMAILS: canary-admin@example.invalid
+          CONTACT_TO: canary-to@example.invalid
       - name: Lighthouse budgets
         run: npm run lhci
       - name: First-load JavaScript budget

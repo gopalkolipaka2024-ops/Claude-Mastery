@@ -21,7 +21,8 @@
     "db:migrate": "node scripts/migrate.mjs",
     "budget:js": "node scripts/check-js-budget.mjs",
     "lhci": "lhci autorun",
-    "test:keyboard": "node scripts/check-keyboard.mjs"
+    "test:keyboard": "node scripts/check-keyboard.mjs",
+    "check:secrets": "node scripts/check-client-secrets.mjs"
   },
   "dependencies": {
     "@fontsource-variable/public-sans": "5.3.0",
