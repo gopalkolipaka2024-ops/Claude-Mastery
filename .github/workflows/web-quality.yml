@@ -55,7 +55,7 @@ jobs:
       SITE_INDEXABLE: "1" # build as production would be, so SEO is measured with indexing on
       SITE_URL: http://localhost:3100 # canonical URLs must point at the server Lighthouse tests
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
