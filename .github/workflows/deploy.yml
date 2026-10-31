@@ -52,6 +52,7 @@ jobs:
     steps:
       - name: Skip until Cloudflare is set up
         id: gate
+        working-directory: . # runs before checkout, when web/ does not exist yet
         run: if [ -z "$CLOUDFLARE_API_TOKEN" ]; then echo "No CLOUDFLARE_API_TOKEN for 'preview'; skipping."; echo "go=false" >> "$GITHUB_OUTPUT"; else echo "go=true" >> "$GITHUB_OUTPUT"; fi
       - if: steps.gate.outputs.go == 'true'
         uses: actions/checkout@v4
@@ -107,6 +108,7 @@ jobs:
     steps:
       - name: Skip until Cloudflare is set up
         id: gate
+        working-directory: . # runs before checkout, when web/ does not exist yet
         run: if [ -z "$CLOUDFLARE_API_TOKEN" ]; then echo "No CLOUDFLARE_API_TOKEN for 'staging'; skipping."; echo "go=false" >> "$GITHUB_OUTPUT"; else echo "go=true" >> "$GITHUB_OUTPUT"; fi
       - if: steps.gate.outputs.go == 'true'
         uses: actions/checkout@v4
@@ -151,6 +153,7 @@ jobs:
       GIT_SHA: ${{ github.sha }}
     steps:
       - name: Production must be switched on and confirmed
+        working-directory: . # runs before checkout, when web/ does not exist yet
         env:
           ENABLED: ${{ vars.PRODUCTION_ENABLED }}
           CONFIRM: ${{ inputs.confirm }}
