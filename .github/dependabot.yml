@@ -1,0 +1,19 @@
+# Weekly dependency update pull requests. Each one runs the Web quality and Security checks
+# before it can be merged. Security fixes are opened as soon as an advisory is published.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # One PR for routine minor/patch updates instead of dozens
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
