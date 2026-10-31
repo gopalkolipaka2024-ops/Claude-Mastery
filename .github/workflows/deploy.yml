@@ -56,7 +56,7 @@ jobs:
       - if: steps.gate.outputs.go == 'true'
         uses: actions/checkout@v4
       - if: steps.gate.outputs.go == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm, cache-dependency-path: web/package-lock.json }
       - if: steps.gate.outputs.go == 'true'
         run: npm ci
@@ -111,7 +111,7 @@ jobs:
       - if: steps.gate.outputs.go == 'true'
         uses: actions/checkout@v4
       - if: steps.gate.outputs.go == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm, cache-dependency-path: web/package-lock.json }
       - if: steps.gate.outputs.go == 'true'
         run: npm ci
@@ -160,7 +160,7 @@ jobs:
           host=$(echo "$SITE_URL" | sed -E 's#^https?://##; s#/.*$##; s#^www\.##')
           [ "$(echo "$CONFIRM" | sed 's#^www\.##')" = "$host" ] || { echo "::error::Type the domain ($host) in the confirm box to deploy production."; exit 1; }
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with: { node-version: 22, cache: npm, cache-dependency-path: web/package-lock.json }
       - run: npm ci
       - name: Remember the live version (for automatic rollback)
