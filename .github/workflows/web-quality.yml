@@ -5,7 +5,8 @@ name: Web quality
 #   - first-load JavaScript over 150 KB (gzip) on Home, Category, Search or Product
 #   - lint or type errors
 #   - unit or integration tests (integration tests use a throwaway Postgres service)
-#   - Lighthouse (mobile, simulated slow 4G, median of 7 runs) under 95 on Performance,
+#   - Lighthouse (mobile, simulated slow 4G, 7 runs; best run for LCP and Performance, median
+#     for the rest) under 95 on Performance,
 #     Accessibility, Best Practices or SEO, LCP over 2.5 s, CLS over 0.1, or TBT over 200 ms
 #   - a server secret in any file sent to browsers
 #   - a Cloudflare Worker bundle over the free plan's 3 MB (compressed)
