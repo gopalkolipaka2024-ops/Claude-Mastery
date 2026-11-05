@@ -1,14 +1,35 @@
 # Adams Shore Super Market & Liquors
 
-**The website is in [`web/`](web/)**: a browse-only store site (Next.js on Cloudflare Workers). Start with
-[`web/README.md`](web/README.md); to run it, [`web/docs/runbook.md`](web/docs/runbook.md); architecture
-decisions are in [`adr/0001-architecture.md`](adr/0001-architecture.md).
+**The website is in [`site/`](site/)**: a simple, fast store information site (hours, address,
+phone, departments, map). It is plain HTML and CSS with no build step.
 
-The rest of this file describes the **original prototype**: a single page with a cart and a deli
-builder, kept for reference. It is replaced by `web/`. Its photo pipeline (Open Food Facts) was
-retired; the new site draws each product's package instead.
+| File | What it is |
+| --- | --- |
+| `site/index.html` | The page. Store details (hours, address, phone) appear here and in the JSON-LD block at the top, which search engines read. Change both together. |
+| `site/styles.css` | Look and layout. Brand colors are at the top. |
+| `site/main.js` | Shows "Open now / Closed now" and highlights today's hours (Quincy time). |
+| `site/_headers` | HTTPS and security headers, used by Cloudflare Pages. |
+| `site/404.html` | Page shown for a wrong address. |
+
+## Put it online (free, HTTPS)
+
+1. Create a free account at [Cloudflare](https://dash.cloudflare.com/sign-up).
+2. **Workers & Pages → Create → Pages → Connect to Git**, and pick this repository.
+3. Settings: production branch `main`; framework preset *None*; build command empty; build
+   output directory `site`.
+4. Deploy. The site appears at `https://<project-name>.pages.dev` with HTTPS already on.
+   Every later push to `main` updates it within a minute.
+5. Later, to use your own domain: the Pages project → **Custom domains → Set up a domain**.
+   HTTPS is set up automatically.
+
+After it is online, add the address to your Google Business Profile's website field.
+
+---
 
 ## Original prototype
+
+The rest of this file describes the original prototype, a single page with a cart and a deli
+builder, kept for reference. It is not the website.
 
 Storefront for 494 Sea St, Quincy: cooler, deli sandwich builder, and every product on the shelf
 with a drawn package image.
