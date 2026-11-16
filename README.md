@@ -10,6 +10,7 @@ phone, departments, map). It is plain HTML and CSS with no build step.
 | `site/main.js` | Shows "Open now / Closed now" and highlights today's hours (Quincy time). |
 | `site/_headers` | HTTPS and security headers, used by Cloudflare Pages. |
 | `site/404.html` | Page shown for a wrong address. |
+| `site/products/` | 20 product photos shown on the department cards, from Open Food Facts (CC BY-SA). The credit line in the footer must stay. |
 
 ## Put it online (free, HTTPS)
 
